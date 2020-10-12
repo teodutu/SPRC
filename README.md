@@ -34,7 +34,7 @@ Se primeste urmatorul raspuns:
 ```
 
 #### Task 3
-Se foloseste requestul de la [Task 2](#task2) pentru a se initia o sesiune
+Se foloseste requestul de la [Task 2](#task-2) pentru a se initia o sesiune
 catre `https://sprc.dfilip.xyz/lab1/task3/login`. A
 doua cerere HTTPS din aceasta sesiune reprezinta o cerere `GET` catre
 `https://sprc.dfilip.xyz/lab1/task3/check`, in urma careia se primeste
