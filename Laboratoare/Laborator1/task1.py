@@ -36,9 +36,8 @@ def send_task1_request(name, group, check=False):
 		"nume": name,
 		"grupa": group,
 	}
-	params_str = "&".join(f"{key}={val}" for key, val in params.items())
 
-	response = requests.post(endpoint, headers=headers, params=params_str,
+	response = requests.post(endpoint, headers=headers, params=params,
 		data=data)
 	if not response.ok:
 		response.raise_for_status()
