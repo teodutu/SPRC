@@ -45,3 +45,14 @@ raspunsul:
     "proof": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ3aG8iOnsibnVtZSI6IlRlb2Rvci1TdGVmYW4gRHV0dSJ9LCJkaWQiOiJ0YXNrMyJ9.K8Oxp2wINIkScaOiepDnSbMmLz_bPS5lsugFe1mBHzM"
 }
 ```
+
+
+### Laborator 3 - RPC
+Se implementeaza perechi de clienti si servere *RPC* folosind API-ul `rpc` din
+POSIX.
+
+#### Closest Prime
+Clientul ii da serverului un numar, iar serverul intoarce numarul prim cel mai
+apropiat de cel primit de la client. Serverul foloseste
+[ciurul lui Atkin](https://en.wikipedia.org/wiki/Sieve_of_Atkin) pentru a
+verifica daca un numar este prim in `O(1)`.
