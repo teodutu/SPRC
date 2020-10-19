@@ -47,7 +47,7 @@ raspunsul:
 ```
 
 
-### Laborator 3 - RPC
+### Laborator 2 - RPC
 Se implementeaza perechi de clienti si servere *RPC* folosind API-ul `rpc` din
 POSIX.
 
