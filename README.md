@@ -54,5 +54,6 @@ POSIX.
 #### Closest Prime
 Clientul ii da serverului un numar, iar serverul intoarce numarul prim cel mai
 apropiat de cel primit de la client. Serverul foloseste
-[ciurul lui Atkin](https://en.wikipedia.org/wiki/Sieve_of_Atkin) pentru a
-verifica daca un numar este prim in `O(1)`.
+[ciurul lui Atkin](https://en.wikipedia.org/wiki/Sieve_of_Atkin) (luat din
+[tema la AA](https://github.com/teodutu/PA/blob/master/Teme/Tema1_AA/tester.cpp)
+) pentru a verifica daca un numar este prim in `O(1)`.
