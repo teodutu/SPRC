@@ -57,3 +57,8 @@ apropiat de cel primit de la client. Serverul foloseste
 [ciurul lui Atkin](https://en.wikipedia.org/wiki/Sieve_of_Atkin) (luat din
 [tema la AA](https://github.com/teodutu/PA/blob/master/Teme/Tema1_AA/tester.cpp)
 ) pentru a verifica daca un numar este prim in `O(1)`.
+
+#### Remote Shell
+Serverul actioneaza ca un shell remote permitand clientilor sa ruleze comenzi pe
+acesta. Fiind vorba despre *RPC*, shellul este *stateless*, iar lungimea
+outputului comenzii este setata de catre client (maximum `8192` octeti).
