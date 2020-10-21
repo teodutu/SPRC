@@ -4,10 +4,10 @@
 
 #include "closest_prime.h"
 
-#define MACHINE "localhost"
 #define PROTOCOL "tcp"
 
-int main(int argc, char *argv[]) {
+int main(int argc, char const *argv[])
+{
 	CLIENT *handle;
 	struct client_data data;
 	int *prime;

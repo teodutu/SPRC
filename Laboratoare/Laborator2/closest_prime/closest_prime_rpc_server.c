@@ -10,7 +10,8 @@
 
 static uint8_t *prime;
 
-static void generate_primes(size_t len) {
+static void generate_primes(size_t len)
+{
 	size_t res;
 	prime[0] = 2;  // 0b10
 
