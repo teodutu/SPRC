@@ -13,7 +13,7 @@ int main(int argc, char const *argv[])
 	int *prime;
 
 	if (argc != 4) {
-		fprintf(stderr, "Usage:\n\t%s <CLIENT_NAME> <SERVER_IP> <NUMBER>\n",
+		fprintf(stderr, "Usage:\n\t%s <SERVER_ADDRESS> <SERVER_IP> <NUMBER>\n",
 			argv[0]);
 		return -1;
 	}
@@ -22,6 +22,7 @@ int main(int argc, char const *argv[])
 		PROTOCOL);
 	if (!handle) {
 		perror("Failed to create client handle");
+		clnt_pcreateerror(argv[0]);
 		return -2;
 	}
 

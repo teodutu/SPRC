@@ -44,7 +44,7 @@ int main(int argc, char const *argv[])
 
 	if (argc < 4) {
 		fprintf(stderr,
-			"Usage:\n\t%s <IP_SERVER> <RESPONSE_LENGTH> <SHELL_COMMAND> \n",
+			"Usage:\n\t%s <SERVER_ADDRESS> <RESPONSE_LENGTH> <SHELL_COMMAND>\n",
 			argv[0]);
 		return -1;
 	}
@@ -53,6 +53,7 @@ int main(int argc, char const *argv[])
 		PROTOCOL);
 	if (!handle) {
 		perror("Failed to create client handle");
+		clnt_pcreateerror(argv[0]);
 		return -2;
 	}
 
