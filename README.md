@@ -51,6 +51,14 @@ raspunsul:
 Se implementeaza perechi de clienti si servere *RPC* folosind API-ul `rpc` din
 POSIX.
 
+#### Get Sum
+Serverul calculeaza suma a 2 numere. Duh...
+
+#### Check
+Se implementeaza doar clientul care trimite catre `sprc2.dfilip.xyz` un *RPC* ce
+are ca parametru o structura care contine 2 stringuri: `nume` si `grupa`, iar
+serverul intoarce `Well done <nume> (<grupa>)`.
+
 #### Closest Prime
 Clientul ii da serverului un numar, iar serverul intoarce numarul prim cel mai
 apropiat de cel primit de la client. Serverul foloseste
