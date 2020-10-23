@@ -35,6 +35,7 @@ int main(int argc, char const *argv[])
 	printf("%d + %d = %d\n", data.x, data.y, *sum);
 
 	clnt_destroy(handle);
+	xdr_free((xdrproc_t)xdr_int, (char *)sum);
 
 	return 0;
 }

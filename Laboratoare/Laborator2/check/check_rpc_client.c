@@ -37,6 +37,7 @@ int main(int argc, char const *argv[])
 
 	clnt_destroy(handle);
 	free(*resp);
+	xdr_free((xdrproc_t)xdr_char, (char *)resp);
 
 	return 0;
 }
