@@ -70,3 +70,9 @@ apropiat de cel primit de la client. Serverul foloseste
 Serverul actioneaza ca un shell remote permitand clientilor sa ruleze comenzi pe
 acesta. Fiind vorba despre *RPC*, shellul este *stateless*, iar lungimea
 outputului comenzii este setata de catre client (maximum `8192` octeti).
+
+
+### Laborator 3 - REST Web Server
+Se implementeaza, folosind [Flask](https://flask.palletsprojects.com/en/1.1.x/),
+un server web care gestioneaza o colectie de filme si suporta metodele `GET`,
+`POST`, `PUT`, `DELETE`.
