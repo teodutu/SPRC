@@ -14,10 +14,6 @@ def _get_first_available_id():
 def handle_request(id=None):
 	global MOVIES
 
-	print(f"\nMethod = {request.method}")
-	print(f"movies = {MOVIES}")
-	print(f"id = {id}")
-
 	if request.method == "GET":
 		if id:
 			movie_id = int(id)
