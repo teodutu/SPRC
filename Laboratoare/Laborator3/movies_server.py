@@ -25,15 +25,12 @@ def handle_request(id=None):
 			movies = [{"id": movie_id, "nume": movie["nume"]}
 				for movie_id, movie in MOVIES.items()]
 
-		return Response(
-			response=json.dumps(movies),
-			status = 200,
-			mimetype="application/json"
-		)
+		return Response(response=json.dumps(movies), status=200,
+			mimetype="application/json")
 	elif request.method == "POST":
 		json_data = request.json
 
-		if json_data and "nume" in json_data:
+		if json_data and "nume" in json_data and json_data["nume"] != "":
 			movie_id = _get_first_available_id()
 			MOVIES[movie_id] = json_data
 
@@ -46,9 +43,12 @@ def handle_request(id=None):
 		if movie_id not in MOVIES:
 			return Response(status=404)
 
-		MOVIES[movie_id] = request.json
+		json_data = request.json
+		if json_data and "nume" in json_data and json_data["nume"] != "":
+			MOVIES[movie_id] = json_data
+			return Response(status=200)
 
-		return Response(status=200)
+		return Response(status=404)
 	elif request.method == "DELETE":
 		movie_id = int(id)
 		if movie_id not in MOVIES:
