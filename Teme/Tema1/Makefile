@@ -13,7 +13,7 @@ build: server client
 server: $(SRC_SERVER) $(PROGRAM)_server.cpp
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
-client: $(SRC_CLIENT) $(PROGRAM)_client.cpp
+client: $(SRC_CLIENT) $(PROGRAM)_client.cpp client_utils.cpp
 	$(CC) $(CFLAGS) $^ -o $@ $(LDFLAGS)
 
 $(SRC_SERVER) $(SRC_CLIENT): $(PROGRAM).x
