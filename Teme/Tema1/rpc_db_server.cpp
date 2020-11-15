@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <unordered_set>
 #include <algorithm>
+#include <cmath>
 
 #include <string.h>
 
@@ -12,18 +13,31 @@
 #include "utils.h"
 
 
-// TOOD: foloseste structura din XDR
 struct data_t {
 	u_int len;
+	float min, max, avg, med;
 	float *values;
 
-	// TODO: copiaza ptr in loc de memcpy? -> nu pare sa mearga
 	data_t() { }
 
-	data_t(u_int l, float *v): len(l)
+	data_t(u_int l, float *v): len(l), min(INFINITY), max(-INFINITY), avg(0.f)
 	{
 		values = new float[l];
-		memcpy(values, v, len * sizeof(*values));
+		for (u_int i = 0; i != l; ++i) {
+			values[i] = v[i];
+
+			min = min > v[i] ? v[i] : min;
+			max = max < v[i] ? v[i] : max;
+			avg += v[i];
+		}
+
+		avg /= l;
+
+		std::nth_element(v, v + l / 2, v + l);
+		if (l & 1)
+			med = v[l / 2];
+		else
+			med = (v[l / 2] + *std::max_element(v, v + l / 2)) / 2;
 	}
 
 	data_t(data_t &&other)
@@ -31,14 +45,24 @@ struct data_t {
 		len = other.len;
 		other.len = 0;
 
+		min = other.min;
+		other.min = 0;
+
+		max = other.max;
+		other.max = 0;
+
+		avg = other.avg;
+		other.avg = 0;
+
+		med = other.med;
+		other.med = 0;
+
 		values = other.values;
 		other.values = nullptr;
 	}
 
 	~data_t()
 	{
-		len = 0;
-
 		if (values != nullptr) {
 			delete[] values;
 			values = nullptr;
@@ -142,7 +166,7 @@ response_t *add_update_1_svc(values_request_t *req, struct svc_req *cl)
 	return &resp;
 }
 
-read_response_t *read_entry_1_svc(read_del_request_t *req, struct svc_req *cl)
+read_response_t *read_entry_1_svc(entry_request_t *req, struct svc_req *cl)
 {
 	static read_response_t resp;
 
@@ -155,11 +179,9 @@ read_response_t *read_entry_1_svc(read_del_request_t *req, struct svc_req *cl)
 	auto cli_it = db.find(req->sess_key);
 	ASSERT(cli_it == db.end(), "SERVER", "Unknown session key", return &resp);
 
-	auto &data = cli_it->second.data;
-	auto data_it = data.find(req->id);
-
+	auto data_it = cli_it->second.data.find(req->id);
 	ASSERT(
-		data_it == data.end(),
+		data_it == cli_it->second.data.end(),
 		"SERVER",
 		("Data id " + std::to_string(req->id)
 			+ " doesn't exist in the database").c_str(),
@@ -182,7 +204,7 @@ read_response_t *read_entry_1_svc(read_del_request_t *req, struct svc_req *cl)
 	return &resp;
 }
 
-response_t *del_1_svc(read_del_request_t *req, struct svc_req *cl)
+response_t *del_1_svc(entry_request_t *req, struct svc_req *cl)
 {
 	static response_t resp;
 	int num_del;
@@ -336,5 +358,34 @@ response_t *store_1_svc(u_long *key, struct svc_req *cl)
 	out.close();
 
 	resp = OK;
+	return &resp;
+}
+
+get_response_t *get_stats_1_svc(entry_request_t *req, struct svc_req *cl)
+{
+	static get_response_t resp;
+	memset(&resp, 0, sizeof(resp));
+	resp.status = ERROR;
+
+	ASSERT(!req, "SERVER", "Incorrect request", return &resp);
+
+	auto cli_it = db.find(req->sess_key);
+	ASSERT(cli_it == db.end(), "SERVER", "Unknown session key", return &resp);
+
+	auto data_it = cli_it->second.data.find(req->id);
+	ASSERT(
+		data_it == cli_it->second.data.end(),
+		"SERVER",
+		("Data id " + std::to_string(req->id)
+			+ " doesn't exist in the database").c_str(),
+		return &resp
+	);
+
+	resp.min = data_it->second.min;
+	resp.max = data_it->second.max;
+	resp.avg = data_it->second.avg;
+	resp.med = data_it->second.med;
+
+	resp.status = OK;
 	return &resp;
 }

@@ -66,7 +66,7 @@ response_t add_update_cmd(
 
 read_response_t *read_cmd(u_long key, std::istringstream &iss, CLIENT *handle)
 {
-	read_del_request_t req;
+	entry_request_t req;
 
 	ASSERT(!key || !handle, "CLIENT", "Incorrect parameter", return NULL);
 
@@ -78,7 +78,7 @@ read_response_t *read_cmd(u_long key, std::istringstream &iss, CLIENT *handle)
 
 response_t del_cmd(u_long key, std::istringstream &iss, CLIENT *handle)
 {
-	read_del_request_t req;
+	entry_request_t req;
 
 	ASSERT(!key || !handle, "CLIENT", "Incorrect parameter", return ERROR);
 
@@ -86,4 +86,19 @@ response_t del_cmd(u_long key, std::istringstream &iss, CLIENT *handle)
 	iss >> req.id;
 
 	return *del_1(&req, handle);
+}
+
+get_response_t *get_stats_cmd(
+	u_long key,
+	std::istringstream &iss,
+	CLIENT *handle
+) {
+	entry_request_t req;
+
+	ASSERT(!key || !handle, "CLIENT", "Incorrect parameter", return NULL);
+
+	req.sess_key = key;
+	iss >> req.id;
+
+	return get_stats_1(&req, handle);
 }

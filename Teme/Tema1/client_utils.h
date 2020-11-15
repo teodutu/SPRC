@@ -22,8 +22,10 @@ read_response_t *read_cmd(u_long key, std::istringstream &iss, CLIENT *handle);
 
 response_t del_cmd(u_long key, std::istringstream &iss, CLIENT *handle);
 
-// load_response_t load_cmd(u_long key, CLIENT *handle);
-
-// response_t store_cmd(u_long key, CLIENT *handle);
+get_response_t *get_stats_cmd(
+	u_long key,
+	std::istringstream &iss,
+	CLIENT *handle
+);
 
 #endif  /* CLIENT_UTILS_H_ */

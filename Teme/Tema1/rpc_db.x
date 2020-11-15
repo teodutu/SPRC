@@ -15,19 +15,15 @@ struct values_request_t {
 	float values<>;
 };
 
-enum metric_t {
-	MIN = 0,
-	MAX,
-	AVG,
-	MED
+struct get_response_t  {
+	response_t status;
+	float min;
+	float max;
+	float avg;
+	float med;
 };
 
-struct get_request_t  {
-	unsigned long sess_key;
-	metric_t metric;
-};
-
-struct read_del_request_t {
+struct entry_request_t {
 	unsigned long sess_key;
 	int id;
 };
@@ -48,9 +44,10 @@ program RPC_DB_PROGRAM {
 		unsigned long login(string) = 1;
 		response_t logout(unsigned long) = 2;
 		response_t add_update(values_request_t) = 3;
-		read_response_t read_entry(read_del_request_t) = 4;
-		response_t del(read_del_request_t) = 5;
+		read_response_t read_entry(entry_request_t) = 4;
+		response_t del(entry_request_t) = 5;
 		load_response_t load(unsigned long) = 6;
 		response_t store(unsigned long) = 7;
+		get_response_t get_stats(entry_request_t) = 8;
 	} = 1;
 } = 1;

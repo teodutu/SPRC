@@ -10,27 +10,30 @@
 #include "utils.h"
 
 
-#define SERVER_ADDRESS	"localhost"
-#define RPC_DB_PROG		1
-#define RPC_DB_VERS		1
-#define PROTOCOL		"tcp"
+#define SERVER_ADDRESS		"localhost"
+#define RPC_DB_PROG			1
+#define RPC_DB_VERS			1
+#define PROTOCOL			"tcp"
 
-#define EXIT_CMD		"exit"
-#define LOGIN_CMD		"login"
-#define LOGOUT_CMD		"logout"
-#define ADD_CMD			"add"
-#define UPDATE_CMD		"update"
-#define DEL_CMD			"del"
-#define READ_CMD		"read"
-#define LOAD_CMD		"load"
-#define STORE_CMD		"store"
+#define EXIT_CMD			"exit"
+#define LOGIN_CMD			"login"
+#define LOGOUT_CMD			"logout"
+#define ADD_CMD				"add"
+#define UPDATE_CMD			"update"
+#define DEL_CMD				"del"
+#define READ_CMD			"read"
+#define LOAD_CMD			"load"
+#define STORE_CMD			"store"
+#define GET_STAT_CMD		"get_stat"
+#define GET_STAT_ALL_CMD	"get_stat_all"
 
 
 int main(void)
 {
 	CLIENT *handle;
 	response_t resp;
-	response_t *resp_ptr;  // TOOD: temporar
+	response_t *resp_ptr;
+	get_response_t *get_resp;
 	read_response_t *read_resp;
 	load_response_t *load_resp;
 	u_long key;
@@ -121,6 +124,19 @@ read_input:
 				"STORE command failed",
 				clnt_perror(handle, ""); goto read_input
 			);
+		} else if (!cmd.compare(GET_STAT_CMD)) {
+			get_resp = get_stats_cmd(key, iss, handle);
+			ASSERT(
+				!get_resp || ERROR == get_resp->status,
+				"CLIENT",
+				"GET_STAT command failed",
+				clnt_perror(handle, ""); goto read_input
+			);
+
+			std::cout << "Stats: min = " << get_resp->min
+				<< "; max = " << get_resp->max
+				<< "; average = " << get_resp->avg
+				<< "; median = " << get_resp->med << '\n';
 		} else
 			std::cerr << "Unknown command!\n";
 	}
