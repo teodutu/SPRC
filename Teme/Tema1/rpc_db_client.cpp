@@ -92,14 +92,10 @@ read_input:
 				clnt_perror(handle, ""); goto read_input
 			);
 
-			// TODO: fa mai civilizat?
-			if (read_resp && OK == read_resp->status) {
-				std::cout << "Data: ";
-
-				for (u_int i = 0; i != read_resp->data.data_len; ++i)
-					std::cout << read_resp->data.data_val[i] << ' ';
-				std::cout << '\n';
-			}
+			std::cout << "Data: ";
+			for (u_int i = 0; i != read_resp->data.data_len; ++i)
+				std::cout << read_resp->data.data_val[i] << ' ';
+			std::cout << '\n';
 		} else if (!cmd.compare(DEL_CMD)) {
 			resp = del_cmd(key, iss, handle);
 			ASSERT(ERROR == resp, "CLIENT", "DEL command failed", ;);
@@ -130,6 +126,19 @@ read_input:
 				!get_resp || ERROR == get_resp->status,
 				"CLIENT",
 				"GET_STAT command failed",
+				clnt_perror(handle, ""); goto read_input
+			);
+
+			std::cout << "Stats: min = " << get_resp->min
+				<< "; max = " << get_resp->max
+				<< "; average = " << get_resp->avg
+				<< "; median = " << get_resp->med << '\n';
+		} else if (!cmd.compare(GET_STAT_ALL_CMD)) {
+			get_resp = get_stats_all_1(&key, handle);
+			ASSERT(
+				!get_resp || ERROR == get_resp->status,
+				"CLIENT",
+				"GET_STAT_ALL command failed",
 				clnt_perror(handle, ""); goto read_input
 			);
 

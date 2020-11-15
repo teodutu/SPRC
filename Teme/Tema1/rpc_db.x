@@ -49,5 +49,6 @@ program RPC_DB_PROGRAM {
 		load_response_t load(unsigned long) = 6;
 		response_t store(unsigned long) = 7;
 		get_response_t get_stats(entry_request_t) = 8;
+		get_response_t get_stats_all(unsigned long) = 9;
 	} = 1;
 } = 1;

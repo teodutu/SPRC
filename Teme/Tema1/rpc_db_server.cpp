@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -71,11 +72,59 @@ struct data_t {
 };
 
 struct client_t {
+	u_int num_elem;
+	float min, max, avg, med;
 	std::string user;
 	std::unordered_map<int, data_t> data;
 
 	client_t() {}
-	client_t(const std::string &user): user(user) { }
+	client_t(const std::string &user):
+		user(user), min(INFINITY), max(-INFINITY), avg(0.f), num_elem(0) { }
+
+	void update_stats(int id)
+	{
+		auto &data_entry = data[id];
+		u_int new_num_elem = num_elem + data_entry.len;
+
+		min = min > data_entry.min ? data_entry.min : min;
+		max = max < data_entry.max ? data_entry.max : max;
+		avg = (avg * num_elem + data_entry.avg * data_entry.len) / new_num_elem;
+		num_elem = new_num_elem;
+
+		update_median();
+	}
+
+private:
+	void update_median()
+	{
+		std::vector<float> all_vals;
+		size_t total_count;
+
+		for (const auto &entry : data)
+			all_vals.insert(
+				all_vals.end(),
+				entry.second.values,
+				entry.second.values + entry.second.len
+			);
+
+		total_count = all_vals.size();
+		std::nth_element(
+			all_vals.begin(),
+			all_vals.begin() + total_count / 2,
+			all_vals.end()
+		);
+
+		if (total_count & 1)
+			med = all_vals[total_count / 2];
+		else
+			med = (
+				all_vals[total_count / 2]
+				+ *std::max_element(
+					all_vals.begin(),
+					all_vals.begin() + total_count / 2
+				)
+			) / 2;
+	}
 };
 
 static u_long key;
@@ -162,6 +211,8 @@ response_t *add_update_1_svc(values_request_t *req, struct svc_req *cl)
 		data_t(req->values.values_len, req->values.values_val)
 	);
 
+	cli_it->second.update_stats(req->id);
+
 	resp = OK;
 	return &resp;
 }
@@ -233,6 +284,7 @@ load_response_t *load_1_svc(u_long *key, struct svc_req *cl)
 	static load_response_t resp;
 	int id;
 	size_t num_entries;
+	float min, max, avg, med;
 	data_t file_data;
 
 	if (resp.ids.ids_val)
@@ -275,6 +327,11 @@ load_response_t *load_1_svc(u_long *key, struct svc_req *cl)
 		return &resp
 	);
 
+	in.read((char *)&cli_it->second.min, sizeof(cli_it->second.min));
+	in.read((char *)&cli_it->second.max, sizeof(cli_it->second.max));
+	in.read((char *)&cli_it->second.avg, sizeof(cli_it->second.avg));
+	in.read((char *)&cli_it->second.med, sizeof(cli_it->second.med));
+
 	resp.ids.ids_val = new int[num_entries];
 	ASSERT(
 		!resp.ids.ids_val,
@@ -286,6 +343,10 @@ load_response_t *load_1_svc(u_long *key, struct svc_req *cl)
 	for (size_t i = 0; i != num_entries; ++i) {
 		in.read((char *)&id, sizeof(id));
 		in.read((char *)&file_data.len, sizeof(file_data.len));
+		in.read((char *)&file_data.min, sizeof(file_data.min));
+		in.read((char *)&file_data.max, sizeof(file_data.max));
+		in.read((char *)&file_data.avg, sizeof(file_data.avg));
+		in.read((char *)&file_data.med, sizeof(file_data.med));
 
 		file_data.values = new float[file_data.len];
 		ASSERT(
@@ -343,10 +404,18 @@ response_t *store_1_svc(u_long *key, struct svc_req *cl)
 
 	num_entries = cli_it->second.data.size();
 	out.write((char *)&num_entries, sizeof(num_entries));
+	out.write((char *)&cli_it->second.min, sizeof(cli_it->second.min));
+	out.write((char *)&cli_it->second.max, sizeof(cli_it->second.max));
+	out.write((char *)&cli_it->second.avg, sizeof(cli_it->second.avg));
+	out.write((char *)&cli_it->second.med, sizeof(cli_it->second.med));
 
 	for (const auto &entry : cli_it->second.data) {
 		out.write((char *)&entry.first, sizeof(entry.first));
 		out.write((char *)&entry.second.len, sizeof(entry.second.len));
+		out.write((char *)&entry.second.min, sizeof(entry.second.min));
+		out.write((char *)&entry.second.max, sizeof(entry.second.max));
+		out.write((char *)&entry.second.avg, sizeof(entry.second.avg));
+		out.write((char *)&entry.second.med, sizeof(entry.second.med));
 
 		for (u_int i = 0; i != entry.second.len; ++i)
 			out.write(
@@ -385,6 +454,26 @@ get_response_t *get_stats_1_svc(entry_request_t *req, struct svc_req *cl)
 	resp.max = data_it->second.max;
 	resp.avg = data_it->second.avg;
 	resp.med = data_it->second.med;
+
+	resp.status = OK;
+	return &resp;
+}
+
+get_response_t *get_stats_all_1_svc(u_long *key, svc_req *cl)
+{
+	static get_response_t resp;
+	memset(&resp, 0, sizeof(resp));
+	resp.status = ERROR;
+
+	ASSERT(!key, "SERVER", "Incorrect request", return &resp);
+
+	auto cli_it = db.find(*key);
+	ASSERT(cli_it == db.end(), "SERVER", "Unknown session key", return &resp);
+
+	resp.min = cli_it->second.min;
+	resp.max = cli_it->second.max;
+	resp.avg = cli_it->second.avg;
+	resp.med = cli_it->second.med;
 
 	resp.status = OK;
 	return &resp;
