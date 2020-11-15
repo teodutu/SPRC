@@ -17,12 +17,32 @@ struct data_t {
 	u_int len;
 	float *values;
 
-	// TODO: copiaza ptr in loc de memcpy?
+	// TODO: copiaza ptr in loc de memcpy? -> nu pare sa mearga
 	data_t() { }
+
 	data_t(u_int l, float *v): len(l)
 	{
 		values = new float[l];
-		memcpy(values, v, l * sizeof(*values));
+		memcpy(values, v, len * sizeof(*values));
+	}
+
+	data_t(data_t &&other)
+	{
+		len = other.len;
+		other.len = 0;
+
+		values = other.values;
+		other.values = nullptr;
+	}
+
+	~data_t()
+	{
+		len = 0;
+
+		if (values != nullptr) {
+			delete[] values;
+			values = nullptr;
+		}
 	}
 };
 
@@ -113,10 +133,10 @@ response_t *add_update_1_svc(values_request_t *req, struct svc_req *cl)
 			return &resp
 		);
 
-	data[req->id] = std::move(data_t(
-		req->values.values_len,
-		req->values.values_val
-	));
+	data.emplace(
+		req->id,
+		data_t(req->values.values_len, req->values.values_val)
+	);
 
 	resp = OK;
 	return &resp;
@@ -156,8 +176,8 @@ read_response_t *read_entry_1_svc(read_del_request_t *req, struct svc_req *cl)
 		data_it->second.len * sizeof(*resp.data.data_val)
 	);
 
-	resp.status = OK;
 	resp.data.data_len = data_it->second.len;
+	resp.status = OK;
 
 	return &resp;
 }
@@ -256,7 +276,7 @@ load_response_t *load_1_svc(u_long *key, struct svc_req *cl)
 		for (u_int j = 0; j != file_data.len; ++j)
 			in.read((char *)(file_data.values + j), sizeof(*file_data.values));
 
-		cli_it->second.data[id] = std::move(file_data);
+		cli_it->second.data.emplace(id, std::move(file_data));
 		resp.ids.ids_val[i] = id;
 	}
 

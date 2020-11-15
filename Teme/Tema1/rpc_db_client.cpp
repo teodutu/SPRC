@@ -29,7 +29,8 @@
 int main(void)
 {
 	CLIENT *handle;
-	response_t *resp;
+	response_t resp;
+	response_t *resp_ptr;  // TOOD: temporar
 	read_response_t *read_resp;
 	load_response_t *load_resp;
 	u_long key;
@@ -46,6 +47,7 @@ int main(void)
 		clnt_pcreateerror(""); return -1;
 	);
 
+read_input:
 	while (std::getline(std::cin, input)) {
 		iss = std::istringstream(input);
 
@@ -63,9 +65,9 @@ int main(void)
 			if (INVALID_KEY != key)
 				logged_in = true;
 		} else if (!cmd.compare(LOGOUT_CMD)) {
-			resp = logout_1(&key, handle);
+			resp_ptr = logout_1(&key, handle);
 			ASSERT(
-				!resp || ERROR == *resp,
+				!resp_ptr || ERROR == *resp_ptr,
 				"CLIENT",
 				"LOGOUT command failed",
 				clnt_perror(handle, "")
@@ -73,18 +75,18 @@ int main(void)
 
 			logged_in = false;
 		} else if (!cmd.compare(ADD_CMD)) {
-			*resp = add_update_cmd(key, iss, handle, ADD);
-			ASSERT(ERROR == *resp, "CLIENT", "ADD command failed", ;);
+			resp = add_update_cmd(key, iss, handle, ADD);
+			ASSERT(ERROR == resp, "CLIENT", "ADD command failed", ;);
 		} else if (!cmd.compare(UPDATE_CMD)) {
-			*resp = add_update_cmd(key, iss, handle, UPDATE);
-			ASSERT(ERROR == *resp, "CLIENT", "UPDATE command failed", ;);
+			resp = add_update_cmd(key, iss, handle, UPDATE);
+			ASSERT(ERROR == resp, "CLIENT", "UPDATE command failed", ;);
 		} else if (!cmd.compare(READ_CMD)) {
 			read_resp = read_cmd(key, iss, handle);
 			ASSERT(
 				!read_resp || ERROR == read_resp->status,
 				"CLIENT",
 				"READ command failed",
-				clnt_perror(handle, "");
+				clnt_perror(handle, ""); goto read_input
 			);
 
 			// TODO: fa mai civilizat?
@@ -96,8 +98,8 @@ int main(void)
 				std::cout << '\n';
 			}
 		} else if (!cmd.compare(DEL_CMD)) {
-			*resp = del_cmd(key, iss, handle);
-			ASSERT(ERROR == *resp, "CLIENT", "DEL command failed", ;);
+			resp = del_cmd(key, iss, handle);
+			ASSERT(ERROR == resp, "CLIENT", "DEL command failed", ;);
 		} else if (!cmd.compare(LOAD_CMD)) {
 			load_resp = load_1(&key, handle);
 			ASSERT(
@@ -112,12 +114,12 @@ int main(void)
 				std::cout << load_resp->ids.ids_val[i] << ' ';
 			std::cout << '\n';
 		} else if (!cmd.compare(STORE_CMD)) {
-			resp = store_1(&key, handle);
+			resp_ptr = store_1(&key, handle);
 			ASSERT(
-				!resp || ERROR == *resp,
+				!resp_ptr || ERROR == *resp_ptr,
 				"CLIENT",
 				"STORE command failed",
-				clnt_perror(handle, "")
+				clnt_perror(handle, ""); goto read_input
 			);
 		} else
 			std::cerr << "Unknown command!\n";
