@@ -20,4 +20,4 @@ $(SRC_SERVER) $(SRC_CLIENT): $(PROGRAM).x
 	$(RPC) -C $^
 
 clean:
-	rm -f client server $(PROGRAM).h $(SRC_SERVER) $(SRC_CLIENT)
+	rm -f client server $(PROGRAM).h $(SRC_SERVER) $(SRC_CLIENT) *.db

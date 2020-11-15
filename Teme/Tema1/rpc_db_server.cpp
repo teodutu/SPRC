@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
@@ -16,6 +17,7 @@ struct data_t {
 	u_int len;
 	float *values;
 
+	// TODO: copiaza ptr in loc de memcpy?
 	data_t() { }
 	data_t(u_int l, float *v): len(l)
 	{
@@ -63,8 +65,10 @@ u_long *login_1_svc(char **user, struct svc_req *cl)
 
 response_t *logout_1_svc(u_long *key, struct svc_req *cl)
 {
-	static response_t resp = ERROR;
+	static response_t resp;
 	std::string user;
+
+	resp =  ERROR;
 
 	ASSERT(!key, "SERVER", "Received invalid session key.", return &resp);
 	ASSERT(
@@ -83,7 +87,8 @@ response_t *logout_1_svc(u_long *key, struct svc_req *cl)
 
 response_t *add_update_1_svc(values_request_t *req, struct svc_req *cl)
 {
-	static response_t resp = ERROR;
+	static response_t resp;
+	resp =  ERROR;
 
 	ASSERT(!req, "SERVER", "Incorrect request", return &resp);
 
@@ -113,16 +118,17 @@ response_t *add_update_1_svc(values_request_t *req, struct svc_req *cl)
 		req->values.values_val
 	));
 
-	std::cout << data[req->id].len << '\n';
-	std::cout << data[req->id].values[0] << "\n\n";
-
 	resp = OK;
 	return &resp;
 }
 
-read_response_t *read_1_svc(read_request_t *req, struct svc_req *cl)
+read_response_t *read_entry_1_svc(read_del_request_t *req, struct svc_req *cl)
 {
-	static read_response_t resp = { .status = ERROR, .data = { 0 } };
+	static read_response_t resp;
+
+	resp.status = ERROR;
+	free(resp.data.data_val);
+	memset(&resp.data, 0, sizeof(resp.data));
 
 	ASSERT(!req, "SERVER", "Incorrect request", return &resp);
 
@@ -140,11 +146,9 @@ read_response_t *read_1_svc(read_request_t *req, struct svc_req *cl)
 		return &resp
 	);
 
-	free(resp.data.data_val);
-
 	resp.data.data_val = new float[data_it->second.len];
 	ASSERT(!resp.data.data_val, "SERVER", "Memory allocation failed",
-		perror("read"); return &resp);
+		perror("read_entry"); return &resp);
 
 	memcpy(
 		resp.data.data_val,
@@ -155,5 +159,162 @@ read_response_t *read_1_svc(read_request_t *req, struct svc_req *cl)
 	resp.status = OK;
 	resp.data.data_len = data_it->second.len;
 
+	return &resp;
+}
+
+response_t *del_1_svc(read_del_request_t *req, struct svc_req *cl)
+{
+	static response_t resp;
+	int num_del;
+
+	resp = ERROR;
+
+	ASSERT(!req, "SERVER", "Incorrect request", return &resp);
+
+	auto cli_it = db.find(req->sess_key);
+	ASSERT(cli_it == db.end(), "SERVER", "Unknown session key", return &resp);
+
+	num_del = cli_it->second.data.erase(req->id);
+	ASSERT(
+		!num_del,
+		"SERVER",
+		("Data id " + std::to_string(req->id) + " not found").c_str(),
+		return &resp
+	);
+
+	resp = OK;
+	return &resp;
+}
+
+load_response_t *load_1_svc(u_long *key, struct svc_req *cl)
+{
+	static load_response_t resp;
+	int id;
+	size_t num_entries;
+	data_t file_data;
+
+	if (resp.ids.ids_val)
+		free(resp.ids.ids_val);
+
+	resp.status = ERROR;
+	memset(&resp.ids, 0, sizeof(resp.ids));
+
+	ASSERT(
+		!key || INVALID_KEY == *key,
+		"SERVER",
+		"Incorrect session key",
+		return &resp
+	);
+
+	auto cli_it = db.find(*key);
+	ASSERT(
+		cli_it == db.end(),
+		"SERVER",
+		("Session key " + std::to_string(*key)
+			+ " doesn't exist in database").c_str(),
+		return &resp;
+	);
+	ASSERT(
+		!cli_it->second.data.empty(),
+		"SERVER",
+		("The client " + cli_it->second.user
+			+ " has already made changes to their database").c_str(),
+		return &resp;
+	);
+
+	std::ifstream in(cli_it->second.user + ".db", std::ios::binary);
+
+	in.read((char *)&num_entries, sizeof(num_entries));
+	ASSERT(
+		!num_entries,
+		"SERVER",
+		("The database file of user " + cli_it->second.user
+			+ " is empty").c_str(),
+		return &resp
+	);
+
+	resp.ids.ids_val = new int[num_entries];
+	ASSERT(
+		!resp.ids.ids_val,
+		"SERVER",
+		"Memory allocation failed",
+		perror("new"); return &resp
+	);
+
+	for (size_t i = 0; i != num_entries; ++i) {
+		in.read((char *)&id, sizeof(id));
+		in.read((char *)&file_data.len, sizeof(file_data.len));
+
+		file_data.values = new float[file_data.len];
+		ASSERT(
+			!file_data.values,
+			"SERVER",
+			"Memory allocation failed",
+			perror("new"); return &resp
+		);
+
+		for (u_int j = 0; j != file_data.len; ++j)
+			in.read((char *)(file_data.values + j), sizeof(*file_data.values));
+
+		cli_it->second.data[id] = std::move(file_data);
+		resp.ids.ids_val[i] = id;
+	}
+
+	in.close();
+
+	resp.ids.ids_len = num_entries;
+	resp.status = OK;
+
+	return &resp;
+}
+
+response_t *store_1_svc(u_long *key, struct svc_req *cl)
+{
+	static response_t resp;
+	size_t num_entries;
+
+	resp = ERROR;
+
+	ASSERT(
+		!key || INVALID_KEY == *key,
+		"SERVER",
+		"Incorrect session key",
+		return &resp
+	);
+
+	auto cli_it = db.find(*key);
+	ASSERT(
+		cli_it == db.end(),
+		"SERVER",
+		("Session key " + std::to_string(*key)
+			+ " doesn't exist in database").c_str(),
+		return &resp;
+	);
+	ASSERT(
+		cli_it->second.data.empty(),
+		"SERVER",
+		("The client " + cli_it->second.user + "'s database is empty").c_str(),
+		return &resp;
+	);
+
+	std::ofstream out(cli_it->second.user + ".db", std::ios::binary);
+
+	num_entries = cli_it->second.data.size();
+	out.write((char *)&num_entries, sizeof(num_entries));
+
+	for (const auto &entry : cli_it->second.data) {
+		out.write((char *)&entry.first, sizeof(entry.first));
+		out.write((char *)&entry.second.len, sizeof(entry.second.len));
+
+		for (u_int i = 0; i != entry.second.len; ++i)
+			out.write(
+				(char *)(entry.second.values + i),
+				sizeof(*entry.second.values)
+			);
+	}
+
+	out.close();
+
+	resp = OK;
 	return &resp;
 }

@@ -66,12 +66,24 @@ response_t add_update_cmd(
 
 read_response_t *read_cmd(u_long key, std::istringstream &iss, CLIENT *handle)
 {
-	read_request_t req;
+	read_del_request_t req;
 
 	ASSERT(!key || !handle, "CLIENT", "Incorrect parameter", return NULL);
 
 	req.sess_key = key;
 	iss >> req.id;
 
-	return read_1(&req, handle);
+	return read_entry_1(&req, handle);
+}
+
+response_t del_cmd(u_long key, std::istringstream &iss, CLIENT *handle)
+{
+	read_del_request_t req;
+
+	ASSERT(!key || !handle, "CLIENT", "Incorrect parameter", return ERROR);
+
+	req.sess_key = key;
+	iss >> req.id;
+
+	return *del_1(&req, handle);
 }
