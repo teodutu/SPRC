@@ -186,3 +186,6 @@ dkms.conf
 
 # Other binaries
 *.zip
+
+# Vscode files
+.vscode/*

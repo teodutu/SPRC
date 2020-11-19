@@ -76,3 +76,20 @@ outputului comenzii este setata de catre client (maximum `8192` octeti).
 Se implementeaza, folosind [Flask](https://flask.palletsprojects.com/en/1.1.x/),
 un server web care gestioneaza o colectie de filme si suporta metodele `GET`,
 `POST`, `PUT`, `DELETE`.
+
+
+### Laborator 4 - Docker
+Nimicuri cu dockere. Pana acum era mai misto.
+
+#### Task 1
+Se descarca fisierele necesare de
+[aici](https://static.dfilip.xyz/sprc_lab_docker_task1.zip), dupa care se
+creeaza dockerul cu `sudo docker build . -t task1`. Apoi se ruleaza dockerul
+creat legandu-l la portul `8080` al hostului astfel:
+```bash
+sudo docker run -it -p 8080:80 task1
+```
+
+#### Task 2
+Se creeaza o suita de servicii capabile sa stocheze date persistent, folosind
+`docker-compose`.
