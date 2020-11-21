@@ -1,0 +1,11 @@
+login test
+add 100 4 1.1 2.2 3.3 4.4
+add 101 3 0.1 -0.2 -0.3
+read 101
+del 101
+read 101
+read 100
+del 102
+read 100
+logout
+exit

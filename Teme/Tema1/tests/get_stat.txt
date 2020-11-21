@@ -1,0 +1,12 @@
+login test
+get_stat_all
+get_stat 100
+add 100 1 2.3
+get_stat 100
+get_stat_all
+add 101 4 1.24 2.1 2.4 3.9
+get_stat 101
+get_stat_all
+get_stat 102
+logout
+exit

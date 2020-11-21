@@ -1,0 +1,8 @@
+logout
+login test1
+login test2
+logout
+logout
+login test2
+logout
+exit

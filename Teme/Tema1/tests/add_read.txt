@@ -1,0 +1,9 @@
+login test2
+add 100 3 1.2 1.4 1.5
+add 102 4 1.001 1.002 1.003 1.004
+add 100 2 1.5 2.5
+read 100
+read 102
+read 103
+logout
+exit

@@ -1,0 +1,21 @@
+login test_load
+load
+add 100 3 1.9 2.2 3.1
+load
+read 100
+store
+logout
+login test_load
+load
+get_stat 100
+get_stat_all
+read 100
+add 101 4 1 2 3 4
+store
+logout
+login test_load
+load
+read 100
+read 101
+logout
+exit
