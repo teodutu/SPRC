@@ -1,0 +1,2 @@
+[rpc_db_server.cpp: 83]: Data id 100 already exists in the database
+[rpc_db_server.cpp: 111]: Data id 103 doesn't exist in the database

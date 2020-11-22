@@ -1,0 +1,10 @@
+[rpc_db_client.cpp: 133]: GET_STAT_ALL command failed
+: RPC: Success
+[rpc_db_client.cpp: 121]: GET_STAT command failed
+: RPC: Success
+Stats: min = 2.3; max = 2.3; average = 2.3; median = 2.3
+Stats: min = 2.3; max = 2.3; average = 2.3; median = 2.3
+Stats: min = 1.24; max = 3.9; average = 2.41; median = 2.25
+Stats: min = 1.24; max = 3.9; average = 2.388; median = 2.3
+[rpc_db_client.cpp: 121]: GET_STAT command failed
+: RPC: Success

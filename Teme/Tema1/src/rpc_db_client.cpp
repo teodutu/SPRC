@@ -26,6 +26,7 @@
 #define STORE_CMD			"store"
 #define GET_STAT_CMD		"get_stat"
 #define GET_STAT_ALL_CMD	"get_stat_all"
+#define SLEEP_CMD			"sleep"
 
 
 int main(void)
@@ -139,6 +140,8 @@ read_input:
 				<< "; max = " << get_resp->max
 				<< "; average = " << get_resp->avg
 				<< "; median = " << get_resp->med << '\n';
+		} else if (!cmd.compare(SLEEP_CMD)) {
+			sleep_cmd(iss);
 		} else
 			std::cerr << "Unknown command!\n";
 	}

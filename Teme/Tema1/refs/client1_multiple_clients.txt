@@ -1,0 +1,10 @@
+Data: 4.1 2.22 1 0.1 
+[rpc_db_client.cpp: 87]: READ command failed
+: RPC: Success
+Data: 2.22 3.1 
+Stats: min = 2.22; max = 3.1; average = 2.66; median = 2.66
+Stats: min = 0.1; max = 4.1; average = 1.778; median = 1.37
+[rpc_db_client.cpp: 133]: GET_STAT_ALL command failed
+: RPC: Success
+Loaded ids: 102 101 100 
+Stats: min = 0.1; max = 4.1; average = 1.778; median = 1.37

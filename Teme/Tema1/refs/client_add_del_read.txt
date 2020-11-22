@@ -1,0 +1,6 @@
+Data: 0.1 -0.2 -0.3 
+[rpc_db_client.cpp: 87]: READ command failed
+: RPC: Success
+Data: 1.1 2.2 3.3 4.4 
+[rpc_db_client.cpp: 99]: DEL command failed
+Data: 1.1 2.2 3.3 4.4 

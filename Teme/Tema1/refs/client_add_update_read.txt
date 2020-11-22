@@ -1,0 +1,4 @@
+Data: 1.5 2.5 
+Data: 1.5 2.5 5.5 10.5 20.5 
+[rpc_db_client.cpp: 84]: UPDATE command failed
+Data: 1.5 2.5 5.5 10.5 20.5 

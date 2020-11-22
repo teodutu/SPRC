@@ -1,0 +1,5 @@
+[rpc_db_client.cpp: 72]: LOGOUT command failed
+: RPC: Success
+Already logged in!
+[rpc_db_client.cpp: 72]: LOGOUT command failed
+: RPC: Success

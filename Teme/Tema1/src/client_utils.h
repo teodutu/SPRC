@@ -4,6 +4,8 @@
 #include <string>
 #include <sstream>
 
+#include <unistd.h>
+
 #include "rpc_db.h"
 
 
@@ -31,6 +33,8 @@ get_response_t *get_stats_cmd(
 	std::istringstream &iss,
 	CLIENT *handle
 );
+
+void sleep_cmd(std::istringstream &iss);
 
 #ifdef __cplusplus
 }

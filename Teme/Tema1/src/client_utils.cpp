@@ -97,3 +97,11 @@ get_response_t *get_stats_cmd(
 
 	return get_stats_1(&req, handle);
 }
+
+void sleep_cmd(std::istringstream &iss)
+{
+	u_int period;
+	iss >> period;
+
+	sleep(period);
+}
