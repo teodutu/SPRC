@@ -22,11 +22,11 @@ make -C $SRC clean
 make -C $SRC
 
 if [ $? != "0" ]; then
-	echo "There were build errors. Stopping now."
+	echo "There were build errors. Stopping now:"
 	exit 1
 fi
 
-echo -e "\nServer and client built successfully. Running single client tests:
+echo -e "\nServer and client built successfully. Running single client tests:"
 for tst in $SINGLE_TESTS/*; do
 	test_name=$(basename $tst)
 
