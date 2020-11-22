@@ -40,9 +40,9 @@ u_long *login_1_svc(char **user, struct svc_req *cl)
 	return &key;
 }
 
-response_t *logout_1_svc(u_long *key, struct svc_req *cl)
+status_t *logout_1_svc(u_long *key, struct svc_req *cl)
 {
-	static response_t resp;
+	static status_t resp;
 	std::string user;
 
 	resp =  ERROR;
@@ -61,9 +61,9 @@ response_t *logout_1_svc(u_long *key, struct svc_req *cl)
 	return &resp;
 }
 
-response_t *add_update_1_svc(values_request_t *req, struct svc_req *cl)
+status_t *add_update_1_svc(add_update_request_t *req, struct svc_req *cl)
 {
-	static response_t resp;
+	static status_t resp;
 	resp =  ERROR;
 
 	ASSERT(!req, "Incorrect request", return &resp);
@@ -131,9 +131,9 @@ read_response_t *read_entry_1_svc(entry_request_t *req, struct svc_req *cl)
 	return &resp;
 }
 
-response_t *del_1_svc(entry_request_t *req, struct svc_req *cl)
+status_t *del_1_svc(entry_request_t *req, struct svc_req *cl)
 {
-	static response_t resp;
+	static status_t resp;
 	int num_del;
 
 	resp = ERROR;
@@ -232,9 +232,9 @@ load_response_t *load_1_svc(u_long *key, struct svc_req *cl)
 	return &resp;
 }
 
-response_t *store_1_svc(u_long *key, struct svc_req *cl)
+status_t *store_1_svc(u_long *key, struct svc_req *cl)
 {
-	static response_t resp;
+	static status_t resp;
 	size_t num_entries;
 
 	resp = ERROR;
@@ -261,6 +261,9 @@ response_t *store_1_svc(u_long *key, struct svc_req *cl)
 	cli_it->second.write_stats(out);
 
 	for (auto &entry : cli_it->second.data) {
+		if (!entry.second.len)
+			continue;
+
 		out.write((char *)&entry.first, sizeof(entry.first));
 		entry.second.write_stats(out);
 
@@ -293,6 +296,11 @@ get_response_t *get_stats_1_svc(entry_request_t *req, struct svc_req *cl)
 		data_it == cli_it->second.data.end(),
 		("Data id " + std::to_string(req->id)
 			+ " doesn't exist in the database").c_str(),
+		return &resp
+	);
+	ASSERT(
+		!data_it->second.len,
+		("There is no data with id " + std::to_string(req->id)).c_str(),
 		return &resp
 	);
 

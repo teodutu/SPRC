@@ -1,6 +1,8 @@
 [rpc_db_client.cpp: 102]: LOAD command failed
 : RPC: Success
 Loaded ids: 
+[client_utils.cpp: 40]: Incorrect GET command
+[rpc_db_client.cpp: 81]: ADD command failed
 [rpc_db_client.cpp: 102]: LOAD command failed
 : RPC: Success
 Loaded ids: 

@@ -15,9 +15,9 @@ extern "C" {
 
 u_long login_cmd(std::istringstream &iss, CLIENT *handle);
 
-response_t logout_cmd(u_long key, CLIENT *handle);
+status_t logout_cmd(u_long key, CLIENT *handle);
 
-response_t add_update_cmd(
+status_t add_update_cmd(
 	const u_long key,
 	std::istringstream &iss,
 	CLIENT *handle,
@@ -26,7 +26,7 @@ response_t add_update_cmd(
 
 read_response_t *read_cmd(u_long key, std::istringstream &iss, CLIENT *handle);
 
-response_t del_cmd(u_long key, std::istringstream &iss, CLIENT *handle);
+status_t del_cmd(u_long key, std::istringstream &iss, CLIENT *handle);
 
 get_response_t *get_stats_cmd(
 	u_long key,

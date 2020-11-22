@@ -49,10 +49,10 @@ for tst in $SINGLE_TESTS/*; do
 
 	if [ $last_part == "FAILED" ]; then
 		echo "Server diff:"
-		printf "%s\n" $diff_server
+		echo -e "$diff_server"
 
-		echo "Client diff:"
-		printf "%s\n" $diff_client
+		echo -e "\nClient diff:"
+		echo -e "$diff_client"
 	fi
 
 	pkill $SERVER
@@ -82,12 +82,12 @@ printf "%s%s%s\n" "$test_name" "${DOTS:$((${#last_part} + ${#test_name}))}" "$la
 
 if [ $last_part == "FAILED" ]; then
 	echo "Server diff:"
-	printf "%s\n" $diff_server
+	echo -e "$diff_server"
 
-	echo "Client1 diff:"
-	printf "%s\n" $diff_client1
-	echo "Client2 diff:"
-	printf "%s\n" $diff_client2
+	echo -e "\nClient 1 diff:"
+	echo -e "$diff_client1"
+	echo -e "\nClient 2 diff:"
+	echo -e "$diff_client2"
 fi
 
 echo -e "\nAll tests run. Cleaning up:"

@@ -32,8 +32,8 @@
 int main(void)
 {
 	CLIENT *handle;
-	response_t resp;
-	response_t *resp_ptr;
+	status_t resp;
+	status_t *resp_ptr;
 	get_response_t *get_resp;
 	read_response_t *read_resp;
 	load_response_t *load_resp;

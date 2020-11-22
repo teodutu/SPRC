@@ -16,22 +16,22 @@ u_long login_cmd(std::istringstream &iss, CLIENT *handle)
 	return *key;
 }
 
-response_t logout_cmd(const u_long key, CLIENT *handle)
+status_t logout_cmd(const u_long key, CLIENT *handle)
 {
-	response_t *resp = logout_1((u_long *)&key, handle);
+	status_t *resp = logout_1((u_long *)&key, handle);
 	ASSERT(!resp, "logout call failed", clnt_perror(handle, ""); return ERROR);
 
 	return *resp;
 }
 
-response_t add_update_cmd(
+status_t add_update_cmd(
 	const u_long key,
 	std::istringstream &iss,
 	CLIENT *handle,
 	method_t method
 ) {
-	values_request_t req;
-	response_t *resp;
+	add_update_request_t req;
+	status_t *resp;
 
 	req.sess_key = key;
 	req.method = method;
@@ -71,7 +71,7 @@ read_response_t *read_cmd(u_long key, std::istringstream &iss, CLIENT *handle)
 	return read_entry_1(&req, handle);
 }
 
-response_t del_cmd(u_long key, std::istringstream &iss, CLIENT *handle)
+status_t del_cmd(u_long key, std::istringstream &iss, CLIENT *handle)
 {
 	entry_request_t req;
 
@@ -100,8 +100,8 @@ get_response_t *get_stats_cmd(
 
 void sleep_cmd(std::istringstream &iss)
 {
-	u_int period;
-	iss >> period;
+	u_int time_period;
+	iss >> time_period;
 
-	sleep(period);
+	sleep(time_period);
 }

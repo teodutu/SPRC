@@ -1,6 +1,7 @@
 login test_load
 load
 add 100 3 1.9 2.2 3.1
+add 101 0
 load
 read 100
 store
