@@ -1,0 +1,5 @@
+[rpc_db_client.cpp: 81]: ADD command failed
+Data: 1.2 1.4 1.5 
+Data: 1.001 1.002 1.003 1.004 
+[rpc_db_client.cpp: 87]: READ command failed
+: RPC: Success

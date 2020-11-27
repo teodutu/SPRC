@@ -1,0 +1,2 @@
+[rpc_db_server.cpp: 111]: Data id 101 doesn't exist in the database
+[rpc_db_server.cpp: 147]: Data id 102 not found

@@ -1,0 +1,16 @@
+[rpc_db_client.cpp: 102]: LOAD command failed
+: RPC: Success
+Loaded ids: 
+[client_utils.cpp: 40]: Incorrect GET command
+[rpc_db_client.cpp: 81]: ADD command failed
+[rpc_db_client.cpp: 102]: LOAD command failed
+: RPC: Success
+Loaded ids: 
+Data: 1.9 2.2 3.1 
+Loaded ids: 100 
+Stats: min = 1.9; max = 3.1; average = 2.4; median = 2.2
+Stats: min = 1.9; max = 3.1; average = 2.4; median = 2.2
+Data: 1.9 2.2 3.1 
+Loaded ids: 101 100 
+Data: 1.9 2.2 3.1 
+Data: 1 2 3 4 
