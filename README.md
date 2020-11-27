@@ -93,3 +93,12 @@ sudo docker run -it -p 8080:80 task1
 #### Task 2
 Se creeaza o suita de servicii capabile sa stocheze date persistent, folosind
 `docker-compose`.
+
+
+
+## Teme
+### Tema 1 - RPC
+Se implementeaza o aplicatie client-server care gestioneaza o baza de date.
+Serverul retine baza de date atat in fisiere cat si in memorie, iar clientii
+pot efectua actiuni asupra acesteia prin intermediul unor *RPC*-uri descrise
+in `README`-ul temei.
