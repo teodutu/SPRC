@@ -52,7 +52,7 @@ def get_post(table, request, uniques, json_fields):
 
 		keys = ["id"] + list(json_fields.keys())
 		body = [{ keys[i]: record[i] for i in range(len(keys)) }
-					for record in cr.fetchall()]
+			for record in cr.fetchall()]
 
 		return Response(
 			status=HTTPStatus.OK,
@@ -71,12 +71,13 @@ def get_post(table, request, uniques, json_fields):
 		if cr.rowcount:
 			return Response(status=HTTPStatus.CONFLICT)
 
-		# updateaza in BD
+		# adauga in BD
 		insert_body = ('(0, '
 			+ ', '.join([f'{_get_field(request, field)}'
 				for field in json_fields.keys()])
 			+ ')')
 		cr.execute(f'INSERT INTO {table} VALUES {insert_body}')
+		db.commit()
 
 		cr.execute(f'SELECT {ID} FROM {table} WHERE {where_cond}')
 		return Response(
@@ -92,19 +93,29 @@ def del_put(table, id, request, uniques, json_fields):
 	except ValueError:
 		return Response(status=HTTPStatus.NOT_FOUND)
 
-	# TODO: verifica daca exista id_int in BD
-	if id_int < 0:
+	# verifica daca exista id_int in BD
+	cr.execute(f'SELECT {LAT} FROM {table} WHERE id = {id_int}')
+
+	if not cr.rowcount:
 		return Response(status=HTTPStatus.NOT_FOUND)
 
 	if request.method == 'DELETE':
-		# TODO: sterge din BD
+		# sterge din BD
+		cr.execute(f'DELETE FROM {table} WHERE id = {id_int}')
+		db.commit()
 
 		return Response(status=HTTPStatus.OK)
 	else:
 		if not _verify_req_body(request, json_fields):
 			return Response(status=HTTPStatus.BAD_REQUEST)
 
-		# TODO: updateaza in BD
+		# updateaza BD
+		keys = list(json_fields.keys())
+		keys.remove(ID)
+
+		update_body = ", ".join([f'{key} = {_get_field(request, key)}'
+			for key in keys])
+		cr.execute(f'UPDATE {table} SET {update_body} WHERE id = {id_int}')
 
 		return Response(status=HTTPStatus.OK)
 
