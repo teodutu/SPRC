@@ -1,0 +1,2685 @@
+{
+	"info": {
+		"_postman_id": "a44c3b98-dcaf-4fd4-8a70-4d05dbd23687",
+		"name": "Tema2_SPRC_tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GET /api/countries Empty Countries",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e31b90ef-3ece-413c-8f92-199f34f630ae",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a3865109-2e85-4920-a72b-d5f6c08ea05f",
+						"exec": [
+							"pm.test(\"GET /api/countries - should return 200 and an empty list\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().length).eq(0);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/countries Incorrect Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2476ff86-6e84-4e06-8dc8-c7b864c2cbbc",
+						"exec": [
+							"pm.test(\"POST /api/countries should return 400: the request is incorrect\", function() {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"Country2\",\n    \"lon\": 21.2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/countries Incorrect Request Types",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1d0c3d4c-3f67-4c04-a408-b9fb4f2cdcc5",
+						"exec": [
+							"pm.test(\"POST /api/countries should return 400: the request JSON has incorrect types\", function() {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nume\": \"Country1\",\n    \"lat\": \"1.1\",\n    \"lon\": 2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/countries Country1 Correct Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0e4fa221-129c-4d73-b4d2-cd11b2e87c19",
+						"exec": [
+							"pm.test(\"POST /api/countries Country1\", function() {",
+							"    pm.response.to.have.status(201);",
+							"",
+							"    const resp = pm.response.json();",
+							"    pm.expect(resp.id).to.eql(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nume\": \"Country1\",\n    \"lat\": 1.1,\n    \"lon\": 2.2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/countries Country1 Duplicate Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "07a781d8-4b9c-44b3-9976-a118bd47724a",
+						"exec": [
+							"pm.test(\"POST /api/countries should return 409: Country1 is duplicate\", function() {",
+							"    pm.response.to.have.status(409);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nume\": \"Country1\",\n    \"lat\": 11.1,\n    \"lon\": 21.2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/countries Country2 Correct Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0132c58b-4fef-473e-bd14-eccbde9ff0bc",
+						"exec": [
+							"pm.test(\"POST /api/countries should return 201 and id 2\", function() {",
+							"    pm.response.to.have.status(201);",
+							"",
+							"    const resp = pm.response.json();",
+							"    pm.expect(resp.id).to.eql(3);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"nume\": \"Country2\",\n    \"lat\": 11.1,\n    \"lon\": 21.2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/countries Country1 Country2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "56084455-8657-4e34-881f-f8be43648d5f",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8b42a260-3d46-4fd1-9aee-add644d1f7e6",
+						"exec": [
+							"pm.test(\"GET /api/countries - should return 200 and a list with Country1 and Country2\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    var i = 0",
+							"    var ids = [1, 3];",
+							"    var names = [\"Country1\", \"Country2\"];",
+							"    var lats = [1.1, 11.1]",
+							"    var lons = [2.2, 21.2]",
+							"",
+							"    _.forEach(pm.response.json(), function(country) {",
+							"        pm.expect(country.id).eq(ids[i]);",
+							"        pm.expect(country.nume).eq(names[i]);",
+							"        pm.expect(country.lat).eq(lats[i]);",
+							"        pm.expect(country.lon).eq(lons[i]);",
+							"",
+							"        i++;",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/countries/asdf Incorrect Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "03fd1a0c-d774-49d3-9073-7baaf28e96fd",
+						"exec": [
+							"pm.test(\"PUT /api/countries - should return 404: incorrect country id\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 1,\n    \"nume\": \"Country3\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries/asdf",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries",
+						"asdf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/countries/100 Missing Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "994ec193-ea6f-4711-aa5b-0ecc28290265",
+						"exec": [
+							"pm.test(\"PUT /api/countries - should return 404: the country id does not exist in the database\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "b0ab99d2-53ac-4c22-bf52-6babee72dead",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 100,\n    \"nume\": \"Country3\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries/100",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/countries/3 Incorrect Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5c3bfe14-9afc-4020-af9e-b582353adbfd",
+						"exec": [
+							"pm.test(\"PUT /api/countries - should return 400: the request field 'name' is incorrect\", function () {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 2,\n    \"name\": \"Country3\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries/3",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/countries/3 Incorrect Request Types",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ab92a64e-49d8-4241-8194-59a4726588ad",
+						"exec": [
+							"pm.test(\"PUT /api/countries - should return 400: the request field 'id' should be int, not str\", function () {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": \"2\",\n    \"nume\": \"Country3\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries/3",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/countries/3 Country1 Duplicate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "df1cddf9-9b3d-4c66-8da6-38b46859b35d",
+						"exec": [
+							"pm.test(\"PUT /api/countries - should return 409: duplicate county\", function () {",
+							"    pm.response.to.have.status(409);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 3,\n    \"nume\": \"Country1\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries/3",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/countries/3 Country3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eb2d6c49-9d9f-4b76-9c22-04ef7ae1d257",
+						"exec": [
+							"pm.test(\"PUT /api/countries - should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 3,\n    \"nume\": \"Country3\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries/3",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/countries Country1 Country3",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e97ece22-14ea-4f05-b8bb-ad398bf0d5bd",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "03192d1c-e292-4acc-b261-5fa852b2cfe9",
+						"exec": [
+							"pm.test(\"GET /api/countries - should return 200 and a list with Country1 and Country3\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    var i = 0;",
+							"    const ids = [1, 3];",
+							"    const names = [\"Country1\", \"Country3\"];",
+							"    const lats = [1.1, 3.3]",
+							"    const lons = [2.2, 4.4]",
+							"",
+							"    _.forEach(pm.response.json(), function(country) {",
+							"        pm.expect(country.id).eq(ids[i]);",
+							"        pm.expect(country.nume).eq(names[i]);",
+							"        pm.expect(country.lat).eq(lats[i]);",
+							"        pm.expect(country.lon).eq(lons[i]);",
+							"",
+							"        i++;",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /api/countries/asdf Incorrect Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "378e3fb7-348d-4280-9e8d-0c5a4c0e3dd6",
+						"exec": [
+							"pm.test(\"DELETE /api/countries - should return 404: incorrect country id\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries/asdf",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries",
+						"asdf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /api/countries/100 Nonexistent Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7c249ea8-4187-4b5b-bf62-4a96962f4fa8",
+						"exec": [
+							"pm.test(\"DELETE /api/countries - should return 404: the country id 100 does not exist in the database\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries/100",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /api/countries/1 Country1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b0d75d7d-89ab-4059-b2b4-85344e0503ac",
+						"exec": [
+							"pm.test(\"DELETE /api/countries - should return 200 and delete Country1\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries/1",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/countries Country3",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "d993e944-266f-4151-9e0f-e01d9fe45428",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "f3d8373f-3d63-454b-8b32-6dd3ec14ff89",
+						"exec": [
+							"pm.test(\"GET /api/countries - should return 200 and a list with Country3\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    const resp = pm.response.json();",
+							"",
+							"    pm.expect(resp.length).eq(1);",
+							"    pm.expect(resp[0].id).eq(3);",
+							"    pm.expect(resp[0].nume).eq(\"Country3\");",
+							"    pm.expect(resp[0].lat).eq(3.3);",
+							"    pm.expect(resp[0].lon).eq(4.4);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/countries",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/cities Empty Cities",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "c15e5b33-1e3b-43a8-9503-b87748fae16a",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "6ed7c882-2bab-4319-a6be-31480f7248ac",
+						"exec": [
+							"pm.test(\"GET /api/cities - should return 200 and an empty list\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().length).eq(0);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/cities Incorrect Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c1954425-964b-49a4-86a6-31eee358ebfb",
+						"exec": [
+							"pm.test(\"POST /api/cities should return 400: the request is incorrect\", function() {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 2,\n    \"name\": \"City1\",\n    \"lon\": 100.1,\n    \"lat\": 100.2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/cities Incorrect Request Types",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a51fa4b6-38bc-43c0-bc98-8f4b60620461",
+						"exec": [
+							"pm.test(\"POST /api/cities should return 400: the request JSON has incorrect types\", function() {",
+							"    pm.response.to.have.status(400);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 2,\n    \"nume\": \"City1\",\n    \"lat\": \"1.1\",\n    \"lon\": 2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/cities Incorrect Country Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "71a5726b-818e-4a36-97c2-b868fb75129a",
+						"exec": [
+							"pm.test(\"POST /api/cities should return 409: there is no country with 'idTara' 10\", function() {",
+							"    pm.response.to.have.status(409);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 10,\n    \"nume\": \"City1\",\n    \"lat\": 1.1,\n    \"lon\": 2.0\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/cities City1 Correct Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "a9887548-72d5-49eb-bd15-8dec1a540756",
+						"exec": [
+							"pm.test(\"POST /api/cities City1\", function() {",
+							"    pm.response.to.have.status(201);",
+							"",
+							"    const resp = pm.response.json();",
+							"    pm.expect(resp.id).to.eql(2);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 3,\n    \"nume\": \"City1\",\n    \"lat\": 10.1,\n    \"lon\": 20.2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/cities City1 Duplicate Name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dd2a4ce6-a00b-4fce-ba1f-ddf9210ff7f4",
+						"exec": [
+							"pm.test(\"POST /api/cities should return 409: City1 is duplicate\", function() {",
+							"    pm.response.to.have.status(409);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 3,\n    \"nume\": \"City1\",\n    \"lat\": 11.1,\n    \"lon\": 21.2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/cities City2 Correct Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f6a5721a-3de7-4b10-b1b4-b00bd4acf240",
+						"exec": [
+							"pm.test(\"POST /api/cities should return 201 and id 2\", function() {",
+							"    pm.response.to.have.status(201);",
+							"",
+							"    const resp = pm.response.json();",
+							"    pm.expect(resp.id).to.eql(4);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 3,\n    \"nume\": \"City2\",\n    \"lat\": 101.1,\n    \"lon\": 201.2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/cities City1 City2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "7a5cf65b-9fb6-4ba3-b356-5ef0f4aafe09",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "729a04bc-e1b7-4861-879f-6c710bf5e3f9",
+						"exec": [
+							"pm.test(\"GET /api/cities - should return 200 and a list with City1 and City2\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    var i = 0",
+							"    var ids = [2, 4];",
+							"    var names = [\"City1\", \"City2\"];",
+							"    var lats = [10.1, 101.1]",
+							"    var lons = [20.2, 201.2]",
+							"",
+							"    _.forEach(pm.response.json(), function(city) {",
+							"        pm.expect(city.id).eq(ids[i]);",
+							"        pm.expect(city.idTara).eq(3);",
+							"        pm.expect(city.nume).eq(names[i]);",
+							"        pm.expect(city.lat).eq(lats[i]);",
+							"        pm.expect(city.lon).eq(lons[i]);",
+							"",
+							"        i++;",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/cities/country/3 City1 City2",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "8d867786-318f-4418-a495-980cbf23f4e3",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4f60a637-156b-485e-9f74-a889715a885f",
+						"exec": [
+							"pm.test(\"GET /api/cities/country - should return 200 and a list with City1 and City2\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    var i = 0",
+							"    var ids = [2, 4];",
+							"    var names = [\"City1\", \"City2\"];",
+							"    var lats = [10.1, 101.1]",
+							"    var lons = [20.2, 201.2]",
+							"",
+							"    _.forEach(pm.response.json(), function(city) {",
+							"        pm.expect(city.id).eq(ids[i]);",
+							"        pm.expect(city.idTara).eq(3);",
+							"        pm.expect(city.nume).eq(names[i]);",
+							"        pm.expect(city.lat).eq(lats[i]);",
+							"        pm.expect(city.lon).eq(lons[i]);",
+							"",
+							"        i++;",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities/country/3",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities",
+						"country",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/cities/asdf Incorrect Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "429148c1-e0ae-4f6d-88df-bb9a13a83b20",
+						"exec": [
+							"pm.test(\"PUT /api/cities - should return 404: incorrect city id\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities/asdf",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities",
+						"asdf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/cities/100 Missing Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "b63b6ebb-6b8a-4c79-882a-a060712f8a36",
+						"exec": [
+							"pm.test(\"PUT /api/cities - should return 404: the city id does not exist in the database\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "18534958-c447-4903-a216-cdfefc795ec6",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 1,\n    \"id\": 100,\n    \"nume\": \"City0\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities/100",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/cities/4 Incorrect Request Types",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2e974bd8-ddb8-409e-8c1d-0385849c5782",
+						"exec": [
+							"pm.test(\"PUT /api/cities - should return 400: the request field 'nume' should be str, not int\", function () {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 3,\n    \"id\": 2,\n    \"nume\": 99,\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities/4",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/cities/4 City1 Duplicate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1c7e11e1-d2d6-4823-b5e7-478b47eb205e",
+						"exec": [
+							"pm.test(\"PUT /api/cities - should return 409: duplicate ('idTara', 'nume') combination\", function () {",
+							"    pm.response.to.have.status(409);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 3,\n    \"id\": 2,\n    \"nume\": \"City1\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities/4",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/cities/4 City3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2ede63f8-e316-4339-9f40-ed40ad7cf066",
+						"exec": [
+							"pm.test(\"PUT /api/cities - should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 3,\n    \"id\": 4,\n    \"nume\": \"City3\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities/4",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/cities City1 City3",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "d8eaa48b-237a-484b-a010-4658efb342eb",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "11ae771e-7a5d-450f-b531-7f53d6d0334c",
+						"exec": [
+							"pm.test(\"GET /api/cities - should return 200 and a list with City1 and City3\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    var i = 0",
+							"    const ids = [2, 4];",
+							"    const names = [\"City1\", \"City3\"];",
+							"    const lats = [10.1, 3.3]",
+							"    const lons = [20.2, 4.4]",
+							"",
+							"    _.forEach(pm.response.json(), function(city) {",
+							"        pm.expect(city.id).eq(ids[i]);",
+							"        pm.expect(city.idTara).eq(3);",
+							"        pm.expect(city.nume).eq(names[i]);",
+							"        pm.expect(city.lat).eq(lats[i]);",
+							"        pm.expect(city.lon).eq(lons[i]);",
+							"",
+							"        i++;",
+							"    });",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /api/cities/asdf Incorrect Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "48036458-3c08-4ad5-9fc4-7726fd6c7afb",
+						"exec": [
+							"pm.test(\"DELETE /api/cities - should return 404: incorrect city id\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities/asdf",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities",
+						"asdf"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /api/cities/100 Nonexistent Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9786df9f-47db-4191-9715-9227747add68",
+						"exec": [
+							"pm.test(\"DELETE /api/cities - should return 404: the city id 100 does not exist in the database\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities/100",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /api/cities/2 City1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "181062b6-cd17-4a4e-908c-b89d9b4f98ed",
+						"exec": [
+							"pm.test(\"DELETE /api/cities - should return 200 and delete City1\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities/2",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/cities City3",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "175027df-9553-4247-9e83-51a74249a520",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "ae29b2ec-2b28-4902-98b8-6b2c4dacd695",
+						"exec": [
+							"pm.test(\"GET /api/countries - should return 200 and a list with City3\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    const resp = pm.response.json();",
+							"",
+							"    pm.expect(resp.length).eq(1);",
+							"    pm.expect(resp[0].id).eq(4);",
+							"    pm.expect(resp[0].nume).eq(\"City3\");",
+							"    pm.expect(resp[0].lat).eq(3.3);",
+							"    pm.expect(resp[0].lon).eq(4.4);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Empty Temperatures",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4977b2bc-cb46-451d-bde1-d784e2357f7e",
+						"exec": [
+							"pm.test(\"GET /api/temperatures - should return 200 and an empty list\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().length).eq(0);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Invalid idOras",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "54b1a7b0-c7a0-47f6-ae98-d7b4c8596f86",
+						"exec": [
+							"pm.test(\"POST /api/temperatures should return 409: there is no city with 'idOras' 10\", function() {",
+							"    pm.response.to.have.status(409);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idOras\": 10,\n    \"valoare\": -1.2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Correct Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4ee118f2-02ca-43b0-8a06-03f5ec77dabf",
+						"exec": [
+							"pm.test(\"POST /api/temperatures should return 201\", function() {",
+							"    pm.response.to.have.status(201);",
+							"",
+							"    const resp = pm.response.json();",
+							"    pm.expect(resp.id).to.eql(2);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idOras\": 4,\n    \"valoare\": -1.2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/temperatures",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9a4e8156-d295-4a59-85b2-ba5ba3fe6dc2",
+						"exec": [
+							"pm.test(\"GET /api/temperatures - should return 200 and a list with one entry\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    const resp = pm.response.json();",
+							"",
+							"    pm.expect(resp.length).eq(1);",
+							"    pm.expect(resp[0].id).eq(2);",
+							"    pm.expect(resp[0].valoare).eq(-1.2);",
+							"    pm.expect(resp[0].timestamp).eq(require('moment')().format(\"YYYY-MM-DD\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/temperatures Lat Lon",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ab97d85f-04ac-4b1f-8c49-2758b59bb0e3",
+						"exec": [
+							"pm.test(\"GET /api/temperatures?lat=3.3&lon=4.4 - should return 200 and a list with one entry\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    const resp = pm.response.json();",
+							"",
+							"    pm.expect(resp.length).eq(1);",
+							"    pm.expect(resp[0].id).eq(2);",
+							"    pm.expect(resp[0].valoare).eq(-1.2);",
+							"    pm.expect(resp[0].timestamp).eq(require('moment')().format(\"YYYY-MM-DD\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures?lat=3.3&lon=4.4",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "3.3"
+						},
+						{
+							"key": "lon",
+							"value": "4.4"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/temperatures Lat",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4621a23b-c2dc-42a9-a0ea-b4976b322d77",
+						"exec": [
+							"pm.test(\"GET /api/temperatures?lat=3.3 - should return 200 and a list with one entry\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    const resp = pm.response.json();",
+							"",
+							"    pm.expect(resp.length).eq(1);",
+							"    pm.expect(resp[0].id).eq(2);",
+							"    pm.expect(resp[0].valoare).eq(-1.2);",
+							"    pm.expect(resp[0].timestamp).eq(require('moment')().format(\"YYYY-MM-DD\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures?lat=3.3",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					],
+					"query": [
+						{
+							"key": "lat",
+							"value": "3.3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/temperatures/cities/10",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "efda459b-2c76-4667-8bc9-4b0693f945d4",
+						"exec": [
+							"pm.test(\"GET /api/temperatures/cities/10 - should return 404: a city with id 10 doesn't exist\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/cities/10",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"cities",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/temperatures/cities/4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ad7f84f2-df3e-4b86-bc80-d4c2b347e250",
+						"exec": [
+							"pm.test(\"GET /api/temperatures/cities/4 - should return 200 and a list with one entry\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    const resp = pm.response.json();",
+							"",
+							"    pm.expect(resp.length).eq(1);",
+							"    pm.expect(resp[0].id).eq(2);",
+							"    pm.expect(resp[0].valoare).eq(-1.2);",
+							"    pm.expect(resp[0].timestamp).eq(require('moment')().format(\"YYYY-MM-DD\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/cities/4",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"cities",
+						"4"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/temperatures/countries/10",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ce97fad3-1fe5-40ac-966e-07edde043ab4",
+						"exec": [
+							"pm.test(\"GET /api/temperatures/cities/10 - should return 404: a country with id 10 doesn't exist\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/cities/10",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"cities",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/temperatures/countries/3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ab911303-8be5-4244-bdaf-7501ff1b503b",
+						"exec": [
+							"pm.test(\"GET /api/temperatures/cities/4 - should return 200 and a list with one entry\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    const resp = pm.response.json();",
+							"",
+							"    pm.expect(resp.length).eq(1);",
+							"    pm.expect(resp[0].id).eq(2);",
+							"    pm.expect(resp[0].valoare).eq(-1.2);",
+							"    pm.expect(resp[0].timestamp).eq(require('moment')().format(\"YYYY-MM-DD\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/countries/3",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"countries",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Invalid from",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "68d30feb-c50a-4b5e-84ad-b6c313e73d8e",
+						"exec": [
+							"pm.test(\"GET /api/temperatures - should return 200 and an empty list\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().length).eq(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures?from=3000-01-02",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "3000-01-02"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET Invalid until",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e53ad482-1d17-4657-a7b2-5bfa33a5962f",
+						"exec": [
+							"pm.test(\"GET /api/temperatures - should return 200 and an empty list\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().length).eq(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures?until=2012-12-21",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					],
+					"query": [
+						{
+							"key": "until",
+							"value": "2012-12-21"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/temperatures Correct from & until",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2f72fac4-77bc-4a1a-9cfb-0f7fcc38da34",
+						"exec": [
+							"pm.test(\"GET /api/temperatures - should return 200 and a list with one entry\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    ",
+							"    const resp = pm.response.json();",
+							"",
+							"    pm.expect(resp.length).eq(1);",
+							"    pm.expect(resp[0].id).eq(2);",
+							"    pm.expect(resp[0].valoare).eq(-1.2);",
+							"    pm.expect(resp[0].timestamp).eq(require('moment')().format(\"YYYY-MM-DD\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures?fromDate=2012-12-21&untilDate=3000-01-20",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					],
+					"query": [
+						{
+							"key": "fromDate",
+							"value": "2012-12-21"
+						},
+						{
+							"key": "untilDate",
+							"value": "3000-01-20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/temperatures/10 Incorrect id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0fce3e4a-6dac-4152-9f40-a631c5404795",
+						"exec": [
+							"pm.test(\"PUT /api/temperatures/10 - should return 404: incorrect temperature id\", function () {",
+							"    pm.response.to.have.status(404);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 10,\n    \"idOras\": 4,\n    \"valoare\": 10.2\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/10",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"10"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST  /api/cities City2 Correct Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7dc98eec-ef9c-42fa-a9f1-3f421b423291",
+						"exec": [
+							"pm.test(\"POST /api/cities City2\", function() {",
+							"    pm.response.to.have.status(201);",
+							"",
+							"    const resp = pm.response.json();",
+							"    pm.expect(resp.id).to.eql(5);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idTara\": 3,\n    \"nume\": \"City2\",\n    \"lat\": 10.1,\n    \"lon\": 20.2\n}"
+				},
+				"url": {
+					"raw": "http://{{BASE_URL}}/cities",
+					"protocol": "http",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST Correct Request 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "af53faee-173c-4a9d-b63d-e7bc46723e4d",
+						"exec": [
+							"pm.test(\"POST /api/temperatures should return 201\", function() {",
+							"    pm.response.to.have.status(201);",
+							"",
+							"    const resp = pm.response.json();",
+							"    pm.expect(resp.id).to.eql(3);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"idOras\": 5,\n    \"valoare\": 22.2\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/temperatures/2 Duplicate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "5701aeaa-2bbb-4531-97df-ea98616ba0ca",
+						"exec": [
+							"pm.test(\"PUT /api/temperatures/2 - should return 409: duplicate ('timestamp', 'idOras') combination\", function () {",
+							"    pm.response.to.have.status(409);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 2,\n    \"idOras\": 5,\n    \"valoare\": 10.2\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/2",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/temperatures/2 Incorrect Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "d86a66df-0ede-4999-a6c6-9e257a9e10f3",
+						"exec": [
+							"pm.test(\"PUT /api/temperatures/2 - should return 409: there is no city with id 1000\", function () {",
+							"    pm.response.to.have.status(409);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 2,\n    \"idOras\": 1000,\n    \"valoare\": 10.2\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/2",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/temperatures/2 Correct Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "70fac926-6727-40de-a298-764fc7ed4307",
+						"exec": [
+							"pm.test(\"PUT /api/temperatures/2 - should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 2,\n    \"idOras\": 4,\n    \"valoare\": 10.2\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/2",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /api/temperatures/100 Nonexistent Id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "838af9c7-8096-4fda-ba2e-562e82e90d1a",
+						"exec": [
+							"pm.test(\"DELETE /api/temperatures/100 - should return 404: there is no temperature with id 100\", function () {",
+							"    pm.response.to.have.status(404);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/100",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"100"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /api/temperatures/2 Correct Request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "9b439538-78b3-4309-acf6-08a86d59af26",
+						"exec": [
+							"pm.test(\"DELETE /api/temperatures/2 - should return 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/2",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DELETE /api/countries/3 Delete Everything",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4e3ae680-552e-4052-a8b6-bdbd685508db",
+						"exec": [
+							"pm.test(\"DELETE /api/countries - should return 200 and delete Country3\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/countries/3",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"countries",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/temperatures Empty",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "43f06718-1fbd-412a-80dd-452031239966",
+						"exec": [
+							"pm.test(\"GET /api/temperatures - should return 200 and an empty list\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().length).eq(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/cities Empty",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "4c906d3a-5901-455a-86b7-39be0e001136",
+						"exec": [
+							"pm.test(\"GET /api/cities - should return 200 and an empty list\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().length).eq(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/cities",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GET /api/countries Empty",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "dbf7308b-2f36-4993-a212-f617a286da8e",
+						"exec": [
+							"pm.test(\"GET /api/countries - should return 200 and an empty list\", function () {",
+							"    pm.response.to.have.status(200);",
+							"    pm.expect(pm.response.json().length).eq(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "acbf343e-7d44-455b-9ad3-4d07d2d12928",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "1be1dba9-ad94-4733-934f-44e42ebcc650",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "20341708-80cf-4d97-a640-5315e193e6ec",
+			"key": "BASE_URL",
+			"value": "localhost:5000"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
