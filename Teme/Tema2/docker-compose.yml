@@ -40,7 +40,6 @@ services:
       - 3000:3000
     cap_add:
       - IPC_LOCK
-    restart: unless-stopped
     networks:
       - networks-gui
 

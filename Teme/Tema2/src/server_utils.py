@@ -117,7 +117,7 @@ def del_put(table, id, request, json_fields):
 			for key in keys])
 
 		try:
-			cr.execute(f'UPDATE {table} SET {update_body} WHERE id = {id_int}')
+			cr.execute(f'UPDATE {table} SET {update_body} WHERE {ID} = {id_int}')
 			if not cr.rowcount:
 				return Response(status=HTTPStatus.NOT_FOUND)
 		except:

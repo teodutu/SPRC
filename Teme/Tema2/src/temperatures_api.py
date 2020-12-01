@@ -68,14 +68,14 @@ def handle_get():
 		conds.append(f'{LONG} = {long}')
 
 	if conds:
-		subclause = (f' and {CITY_ID} in (SELECT {ID} FROM {CITIES_DB} WHERE '
-			+ ' and '.join(conds) + ')')
+		subclause = (f' AND {CITY_ID} in (SELECT {ID} FROM {CITIES_DB} WHERE '
+			+ ' AND '.join(conds) + ')')
 	else:
 		subclause = ''
 
 	cr.execute(f"""SELECT {ID}, {VALUE}, DATE_FORMAT({TIMESTAMP}, '%Y-%m-%d')
 		FROM {TEMPERATURES_DB} WHERE
-			{TIMESTAMP} BETWEEN '{from_date}' and '{until_date}'
+			{TIMESTAMP} BETWEEN '{from_date}' AND '{until_date}'
 			{subclause}
 	""")
 	return make_get_response([ID, VALUE, TIMESTAMP], cr.fetchall())
@@ -89,7 +89,7 @@ def handle_get_cities(id):
 		f"""SELECT {ID}, {VALUE}, DATE_FORMAT({TIMESTAMP}, '%Y-%m-%d')
 			FROM {TEMPERATURES_DB} WHERE
 				{CITY_ID} = {id}
-				and {TIMESTAMP} BETWEEN '{from_date}' and '{until_date}'
+				AND {TIMESTAMP} BETWEEN '{from_date}' AND '{until_date}'
 		"""
 	)
 
