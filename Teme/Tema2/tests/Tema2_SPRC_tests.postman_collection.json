@@ -1904,40 +1904,6 @@
 			"response": []
 		},
 		{
-			"name": "GET /api/temperatures/cities/10",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "efda459b-2c76-4667-8bc9-4b0693f945d4",
-						"exec": [
-							"pm.test(\"GET /api/temperatures/cities/10 - should return 404: a city with id 10 doesn't exist\", function () {",
-							"    pm.response.to.have.status(404);",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/temperatures/cities/10",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"temperatures",
-						"cities",
-						"10"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "GET /api/temperatures/cities/4",
 			"event": [
 				{
@@ -1972,40 +1938,6 @@
 						"temperatures",
 						"cities",
 						"4"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "GET /api/temperatures/countries/10",
-			"event": [
-				{
-					"listen": "test",
-					"script": {
-						"id": "ce97fad3-1fe5-40ac-966e-07edde043ab4",
-						"exec": [
-							"pm.test(\"GET /api/temperatures/cities/10 - should return 404: a country with id 10 doesn't exist\", function () {",
-							"    pm.response.to.have.status(404);",
-							"});",
-							""
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{BASE_URL}}/temperatures/cities/10",
-					"host": [
-						"{{BASE_URL}}"
-					],
-					"path": [
-						"temperatures",
-						"cities",
-						"10"
 					]
 				}
 			},
@@ -2676,7 +2608,7 @@
 	],
 	"variable": [
 		{
-			"id": "20341708-80cf-4d97-a640-5315e193e6ec",
+			"id": "66f48dbb-a104-483b-8785-80facf069937",
 			"key": "BASE_URL",
 			"value": "localhost:5000"
 		}

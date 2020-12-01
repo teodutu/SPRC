@@ -23,17 +23,13 @@ def _get_dates(request):
 
 def _get_local_temps(table, id, keys, query):
 	try:
-		id_int = int(id)
+		_ = int(id)
 	except ValueError:
 		return Response(
 			status=HTTPStatus.OK,
 			response=json.dumps([]),
 			mimetype=RESPONSE_CONTENT_TYPE
 		)
-
-	cr.execute(f'SELECT {LAT} FROM {table} WHERE {ID} = {id_int}')
-	if not cr.rowcount:
-		return Response(status=HTTPStatus.NOT_FOUND)
 
 	cr.execute(query)
 	return make_get_response(keys, cr.fetchall())

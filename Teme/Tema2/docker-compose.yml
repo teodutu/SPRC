@@ -10,7 +10,6 @@ services:
     build: ./src
     ports:
       - "5000:5000"
-    restart: always
     networks:
       - network-api
 
@@ -23,12 +22,32 @@ services:
       - ./db/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
       - network-api
+      - networks-gui
     environment:
       MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: Meteorologie
+      MYSQL_USER: meteo-admin
+      MYSQL_PASSWORD: meteo
+
+  mysql-workbench:
+    depends_on:
+      - mysql
+    image: ghcr.io/linuxserver/mysql-workbench
+    container_name: mysql-workbench
+    environment:
+      - TZ=Europe/Bucharest
+    ports:
+      - 3000:3000
+    cap_add:
+      - IPC_LOCK
+    restart: unless-stopped
+    networks:
+      - networks-gui
 
 
 networks:
   network-api: {}
+  networks-gui: {}
 
 
 volumes:
