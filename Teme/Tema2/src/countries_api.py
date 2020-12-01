@@ -9,17 +9,17 @@ countries_api = Blueprint('countries_api', __name__)
 
 @countries_api.route('/api/countries', methods=['GET', 'POST'])
 def handle_get_post():
-    return get_post(
-        COUNTRIES_DB,
-        request,
-        [NAME],
-        {NAME: str, LAT: float, LONG: float})
+	return get_post(
+		COUNTRIES_DB,
+		request,
+		[NAME],
+		{NAME: str, LAT: float, LONG: float})
 
 
 @countries_api.route('/api/countries/<id>', methods=['DELETE', 'PUT'])
 def handle_del_put(id):
-    return del_put(
-        COUNTRIES_DB,
-        id,
-        request,
-        {ID: int, NAME: str, LAT: float, LONG: float})
+	return del_put(
+		COUNTRIES_DB,
+		id,
+		request,
+		{ID: int, NAME: str, LAT: float, LONG: float})

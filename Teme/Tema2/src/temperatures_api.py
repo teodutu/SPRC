@@ -9,104 +9,104 @@ temperatures_api = Blueprint('temperatures_api', __name__)
 
 
 def _get_dates(request):
-    from_date = datetime.strptime(
-        request.args.get(FROM, default='1000-01-01', type=str),
-        '%Y-%m-%d'
-    )
-    until_date = datetime.strptime(
-        request.args.get(UNTIL, default='9999-12-31', type=str),
-        '%Y-%m-%d'
-    )
+	from_date = datetime.strptime(
+		request.args.get(FROM, default='1000-01-01', type=str),
+		'%Y-%m-%d'
+	)
+	until_date = datetime.strptime(
+		request.args.get(UNTIL, default='9999-12-31', type=str),
+		'%Y-%m-%d'
+	)
 
-    return from_date, until_date
+	return from_date, until_date
 
 
 def _get_local_temps(table, id, keys, query):
-    try:
-        id_int = int(id)
-    except ValueError:
-        return Response(
-            status=HTTPStatus.OK,
-            response=json.dumps([]),
-            mimetype=RESPONSE_CONTENT_TYPE
-        )
+	try:
+		id_int = int(id)
+	except ValueError:
+		return Response(
+			status=HTTPStatus.OK,
+			response=json.dumps([]),
+			mimetype=RESPONSE_CONTENT_TYPE
+		)
 
-    cr.execute(f'SELECT {LAT} FROM {table} WHERE {ID} = {id_int}')
-    if not cr.rowcount:
-        return Response(status=HTTPStatus.NOT_FOUND)
+	cr.execute(f'SELECT {LAT} FROM {table} WHERE {ID} = {id_int}')
+	if not cr.rowcount:
+		return Response(status=HTTPStatus.NOT_FOUND)
 
-    cr.execute(query)
-    return make_get_response(keys, cr.fetchall())
+	cr.execute(query)
+	return make_get_response(keys, cr.fetchall())
 
 
 @temperatures_api.route('/api/temperatures', methods=['POST'])
 def handle_post():
-    return get_post(
-        TEMPERATURES_DB,
-        request,
-        [TIMESTAMP, CITY_ID],
-        {VALUE: float, CITY_ID: int}
-    )
+	return get_post(
+		TEMPERATURES_DB,
+		request,
+		[TIMESTAMP, CITY_ID],
+		{VALUE: float, CITY_ID: int}
+	)
 
 
 @temperatures_api.route('/api/temperatures/<id>', methods=['DELETE', 'PUT'])
 def handle_del_put(id):
-    return del_put(
-        TEMPERATURES_DB,
-        id,
-        request,
-        {ID: int, VALUE: float, CITY_ID: int}
-    )
+	return del_put(
+		TEMPERATURES_DB,
+		id,
+		request,
+		{ID: int, VALUE: float, CITY_ID: int}
+	)
 
 
 @temperatures_api.route('/api/temperatures', methods=['GET'])
 def handle_get():
-    lat = request.args.get(LAT, type=float)
-    long = request.args.get(LONG, type=float)
-    from_date, until_date = _get_dates(request)
+	lat = request.args.get(LAT, type=float)
+	long = request.args.get(LONG, type=float)
+	from_date, until_date = _get_dates(request)
 
-    conds = []
-    if lat:
-        conds.append(f'{LAT} = {lat}')
-    if long:
-        conds.append(f'{LONG} = {long}')
+	conds = []
+	if lat:
+		conds.append(f'{LAT} = {lat}')
+	if long:
+		conds.append(f'{LONG} = {long}')
 
-    if conds:
-        subclause = (f' and {CITY_ID} in (SELECT {ID} FROM {CITIES_DB} WHERE '
-            + ' and '.join(conds) + ')')
-    else:
-        subclause = ''
+	if conds:
+		subclause = (f' and {CITY_ID} in (SELECT {ID} FROM {CITIES_DB} WHERE '
+			+ ' and '.join(conds) + ')')
+	else:
+		subclause = ''
 
-    cr.execute(f"""SELECT {ID}, {VALUE}, DATE_FORMAT({TIMESTAMP}, '%Y-%m-%d')
-        FROM {TEMPERATURES_DB} WHERE
-            {TIMESTAMP} BETWEEN '{from_date}' and '{until_date}'
-            {subclause}
-    """)
-    return make_get_response([ID, VALUE, TIMESTAMP], cr.fetchall())
+	cr.execute(f"""SELECT {ID}, {VALUE}, DATE_FORMAT({TIMESTAMP}, '%Y-%m-%d')
+		FROM {TEMPERATURES_DB} WHERE
+			{TIMESTAMP} BETWEEN '{from_date}' and '{until_date}'
+			{subclause}
+	""")
+	return make_get_response([ID, VALUE, TIMESTAMP], cr.fetchall())
 
 
 @temperatures_api.route('/api/temperatures/cities/<id>', methods=['GET'])
 def handle_get_cities(id):
-    from_date, until_date = _get_dates(request)
+	from_date, until_date = _get_dates(request)
 
-    return _get_local_temps(CITIES_DB, id, [ID, VALUE, TIMESTAMP],
-        f"""SELECT {ID}, {VALUE}, DATE_FORMAT({TIMESTAMP}, '%Y-%m-%d')
-            FROM {TEMPERATURES_DB} WHERE
-                {CITY_ID} = {id}
-                and {TIMESTAMP} BETWEEN '{from_date}' and '{until_date}'
-        """
-    )
+	return _get_local_temps(CITIES_DB, id, [ID, VALUE, TIMESTAMP],
+		f"""SELECT {ID}, {VALUE}, DATE_FORMAT({TIMESTAMP}, '%Y-%m-%d')
+			FROM {TEMPERATURES_DB} WHERE
+				{CITY_ID} = {id}
+				and {TIMESTAMP} BETWEEN '{from_date}' and '{until_date}'
+		"""
+	)
 
 
 @temperatures_api.route('/api/temperatures/countries/<id>', methods=['GET'])
 def handle_get_countries(id):
-    from_date, until_date = _get_dates(request)
+	from_date, until_date = _get_dates(request)
 
-    return _get_local_temps(COUNTRIES_DB, id, [ID, VALUE, TIMESTAMP],
-        f"""SELECT {ID}, {VALUE}, DATE_FORMAT({TIMESTAMP}, '%Y-%m-%d')
-            FROM {TEMPERATURES_DB} WHERE
-                {TIMESTAMP} BETWEEN '{from_date}' and '{until_date}'
-                and {CITY_ID} IN
-                    (SELECT {ID} FROM {CITIES_DB} WHERE {COUNTRY_ID} = {id})
-        """
-    )
+	return _get_local_temps(COUNTRIES_DB, id, [ID, VALUE, TIMESTAMP],
+		f"""SELECT {ID}, {VALUE}, DATE_FORMAT({TIMESTAMP}, '%Y-%m-%d')
+			FROM {TEMPERATURES_DB} WHERE
+				{TIMESTAMP} BETWEEN '{from_date}' and '{until_date}'
+				and {CITY_ID} IN
+					(SELECT {ID} FROM {CITIES_DB} WHERE {COUNTRY_ID} = {id})
+		"""
+	)
