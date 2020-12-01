@@ -1,0 +1,33 @@
+version: '3.3'
+
+services:
+  api:
+    depends_on:
+      - mysql
+    build: ./src
+    ports:
+      - "5000:5000"
+    networks:
+      - network-meteorology
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "32000:3306"
+    volumes:
+      - meteorology-db:/var/lib/mysql/
+      # - ./db/init-db.sql:/docker-entrypoins-init.d/init-db.sql
+    networks:
+      - network-meteorology
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_USER: meteo-admin
+      MYSQL_PASSWORD: meteo
+      # MYSQL_ALLOW_EMPTY_PASSWORD: yes
+
+networks:
+  network-meteorology:
+    driver: bridge
+
+volumes:
+  meteorology-db:
