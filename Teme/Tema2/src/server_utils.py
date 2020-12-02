@@ -1,6 +1,8 @@
 from datetime import datetime
 from flask import json, Response, request
 from http import HTTPStatus
+from os import getenv
+
 import MySQLdb
 
 
@@ -26,9 +28,9 @@ DB_NAME = 'Meteorologie'
 # TODO: vezi cum te conectezi asa cum vrea Hogea
 db = MySQLdb.connect(
 	host='mysql',
-	port=3306,
-	user='meteo-admin',
-	passwd='meteo',
+	port=int(getenv('MYSQL_PORT')),
+	user=getenv('MYSQL_USER'),
+	passwd=getenv('MYSQL_PASSWORD'),
 	db=DB_NAME
 )
 cr = db.cursor()

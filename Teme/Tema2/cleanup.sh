@@ -3,11 +3,10 @@
 docker-compose down -v
 docker-compose rm
 
-docker system prune --volumes
+docker volume rm meteo-db
+docker network rm network-api network-gui
 
-docker rmi mysql:5.7 -f
-docker rmi python:3.8 -f
-docker rmi tema2_server:latest -f
-docker rmi ghcr.io/linuxserver/mysql-workbench:latest
+docker rmi mysql:5.7 python:3.8 meteo-server:latest \
+	ghcr.io/linuxserver/mysql-workbench:latest -f
 
-rm -rf db/meteorology-db/
+rm -rf db/meteo-db/

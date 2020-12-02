@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 
 
 services:
@@ -8,26 +8,29 @@ services:
     links:
       - mysql
     build: ./src
+    image: meteo-server
+    container_name: meteo-server
     ports:
       - "5000:5000"
     networks:
       - network-api
+    environment:
+      MYSQL_PORT: 3306
+    env_file: global-variables.env
 
   mysql:
     image: mysql:5.7
     ports:
       - "32000:3306"
     volumes:
-      - ./db/meteorology-db:/var/lib/mysql
+      - ./db/meteo-db:/var/lib/mysql
       - ./db/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     networks:
       - network-api
-      - networks-gui
+      - network-gui
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: Meteorologie
-      MYSQL_USER: meteo-admin
-      MYSQL_PASSWORD: meteo
+    env_file: global-variables.env
 
   mysql-workbench:
     depends_on:
@@ -41,13 +44,16 @@ services:
     cap_add:
       - IPC_LOCK
     networks:
-      - networks-gui
+      - network-gui
 
 
 networks:
-  network-api: {}
-  networks-gui: {}
+  network-api:
+    name: network-api
+  network-gui:
+    name: network-gui
 
 
 volumes:
-  meteorology-db: {}
+  meteo-db:
+    name: meteo-db
