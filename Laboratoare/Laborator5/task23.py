@@ -6,6 +6,7 @@ import paho.mqtt.client as mqtt
 
 
 PUBLIC_ENDPOINT = "broker.hivemq.com"
+QOS = 2
 
 
 def _get_args():
@@ -22,24 +23,26 @@ def _get_args():
 	return parser.parse_args()
 
 
-def _on_connect(client, userdata, flags, rc):
+def _on_connect(client, args, flags, rc):
 	print(f"Connected with result code {rc}")
+	client.subscribe(args.topic, QOS)
 
 
-def _on_message(client, userdata, msg):
+def _on_message(client, args, msg):
+	if msg.topic == urljoin(args.topic, args.name):
+		return
+
 	print(f"[{msg.topic}]: {msg.payload.decode('utf-8').rstrip()}")
 
 
 def create_client(args):
-	client = mqtt.Client(args.id, clean_session=False, userdata=args.topic)
+	client = mqtt.Client(args.id, clean_session=False, userdata=args)
 	client.on_connect = _on_connect
 	client.on_message = _on_message
 
 	host_name = PUBLIC_ENDPOINT if args.public else "localhost"
 
 	client.connect(host_name)
-	client.subscribe(args.topic, 2)
-
 	client.loop_start()
 
 	return client
@@ -60,7 +63,7 @@ def main():
 		if "exit" == msg.rstrip():
 			break
 
-		cl.publish(topic, msg, qos=2, retain=True)
+		cl.publish(topic, msg, qos=QOS, retain=True)
 
 	close_client(cl)
 
