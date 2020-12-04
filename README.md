@@ -95,6 +95,15 @@ Se creeaza o suita de servicii capabile sa stocheze date persistent, folosind
 `docker-compose`.
 
 
+### Laborator 5 - MQTT
+Se foloseste protocolul [MQTT](https://mqtt.org/) pentru a simula un chat de
+*IRC* practic :))) Protocolul functioneaza pe baza modelului
+*Publisher-Subscriber*. Topicul la care clientul se aboneaza este
+`chat/sprc/#`, iar cel pe care publica este `chat/sprc/<NumeStudent>`.
+
+Alt lab degeaba.
+
+
 
 ## Teme
 ### Tema 1 - RPC

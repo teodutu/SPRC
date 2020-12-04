@@ -59,8 +59,10 @@ def main():
 
 	cl = create_client(args)
 
-	for msg in sys.stdin:
-		if "exit" == msg.rstrip():
+	for line in sys.stdin:
+		msg = line.rstrip()
+
+		if "exit" == msg:
 			break
 
 		cl.publish(topic, msg, qos=QOS, retain=True)
