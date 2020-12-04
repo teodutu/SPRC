@@ -25,7 +25,6 @@ TEMPERATURES_DB = 'Temperaturi'
 DB_NAME = 'Meteorologie'
 
 
-# TODO: vezi cum te conectezi asa cum vrea Hogea
 db = MySQLdb.connect(
 	host='mysql',
 	port=int(getenv('MYSQL_PORT')),
@@ -37,8 +36,8 @@ cr = db.cursor()
 
 
 def _verify_req_body(request, fields):
-	return all(field in request.json and type(request.json[field]) == t
-		for field, t in fields.items())
+	return all(field in request.json and type(request.json[field]) in types
+		for field, types in fields.items())
 
 
 def _get_field(request, field):
@@ -109,7 +108,9 @@ def del_put(table, id, request, json_fields):
 
 		return Response(status=HTTPStatus.OK)
 	else:
-		if not _verify_req_body(request, json_fields):
+		if (not _verify_req_body(request, json_fields)
+			or request.json[ID] != id_int
+		):
 			return Response(status=HTTPStatus.BAD_REQUEST)
 
 		keys = list(json_fields.keys())

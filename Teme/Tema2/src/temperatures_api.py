@@ -16,7 +16,7 @@ def _get_dates(request):
 	until_date = datetime.strptime(
 		request.args.get(UNTIL, default='9999-12-31', type=str),
 		'%Y-%m-%d'
-	)
+	).replace(hour=23, minute=59, second=59)
 
 	return from_date, until_date
 
@@ -41,7 +41,7 @@ def handle_post():
 		TEMPERATURES_DB,
 		request,
 		[TIMESTAMP, CITY_ID],
-		{VALUE: float, CITY_ID: int}
+		{VALUE: [float, int], CITY_ID: [int]}
 	)
 
 
@@ -51,7 +51,7 @@ def handle_del_put(id):
 		TEMPERATURES_DB,
 		id,
 		request,
-		{ID: int, VALUE: float, CITY_ID: int}
+		{ID: [int], VALUE: [float, int], CITY_ID: [int]}
 	)
 
 

@@ -24,6 +24,8 @@ Fiecare parte din *API* (de ex. `/api/countries`) este implementata ca un
 `Blueprint` intr-un fisier cu denumire specifica (de ex. *API*-ul anterior este
 implementat in fisierul `countries_api.py`).
 
+*API*-ul ruleaza pe portul `5000`.
+
 ### Baza de date
 Aceasta este de tip *MySQL* pentru ca relatiile dintre tabele se modeleaza
 usor in baze de date *SQL* folosind *Primary Key* si *Foreign Key* si pentru ca
@@ -38,6 +40,8 @@ username: meteo-admin
 password: meteo
 ```
 
+Baza de date poate fi accesata de pe `localhost` prin portul `32000`.
+
 ### Utilitarul de gestiune
 Utilitarul folosit este
 [mysql-workbench](https://hub.docker.com/r/linuxserver/mysql-workbench), pentru
@@ -46,10 +50,13 @@ minim. Pentru conectarea la baza de date (folosind credentialele din sectiunea
 anterioara) este necesar ca parola sa fie oferita din *Keychain*, din motive de
 securitate.
 
+*Mysql-workbench* expone portul `3000` si poate accesa baza de date pe portul
+`3306`.
+
 ## Stergere
 Scriptul `cleanup.sh` disponibil in radacina proiectului sterge din sistem toate
 resursele descarcate sau create (fisiere, volume, retele) de aplicatie.
 
 ## Testare
-Suita de teste cu care a fost verificata aplicatia se gaseste in fisierul
-`tests/Tema2_SPRC_tests.postman_collection.json`.
+Suita de teste pentru *Postman* cu care a fost verificata aplicatia se gaseste
+in fisierul `tests/Tema2_SPRC_tests.postman_collection.json`.

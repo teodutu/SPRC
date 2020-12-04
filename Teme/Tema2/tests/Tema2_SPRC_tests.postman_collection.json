@@ -1377,7 +1377,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n    \"idTara\": 3,\n    \"id\": 2,\n    \"nume\": \"City1\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
+					"raw": "{\n    \"idTara\": 3,\n    \"id\": 4,\n    \"nume\": \"City1\",\n    \"lat\": 3.3,\n    \"lon\": 4.4\n}"
 				},
 				"url": {
 					"raw": "http://{{BASE_URL}}/cities/4",
@@ -2086,7 +2086,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{BASE_URL}}/temperatures?fromDate=2012-12-21&untilDate=3000-01-20",
+					"raw": "{{BASE_URL}}/temperatures?from=2012-12-21&until=3000-01-20",
 					"host": [
 						"{{BASE_URL}}"
 					],
@@ -2095,11 +2095,11 @@
 					],
 					"query": [
 						{
-							"key": "fromDate",
+							"key": "from",
 							"value": "2012-12-21"
 						},
 						{
-							"key": "untilDate",
+							"key": "until",
 							"value": "3000-01-20"
 						}
 					]
@@ -2313,6 +2313,48 @@
 				"body": {
 					"mode": "raw",
 					"raw": "{\n    \"id\": 2,\n    \"idOras\": 1000,\n    \"valoare\": 10.2\n}"
+				},
+				"url": {
+					"raw": "{{BASE_URL}}/temperatures/2",
+					"host": [
+						"{{BASE_URL}}"
+					],
+					"path": [
+						"temperatures",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PUT /api/temperatures/2 Nonmatching Ids",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0fcc22f6-68d1-4c3a-b98c-16094e33efcd",
+						"exec": [
+							"pm.test(\"PUT /api/temperatures/2 - should return 400: the id in the body does is not equalt id in the path\", function () {",
+							"    pm.response.to.have.status(400);",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"id\": 3,\n    \"idOras\": 4,\n    \"valoare\": 10.2\n}"
 				},
 				"url": {
 					"raw": "{{BASE_URL}}/temperatures/2",
@@ -2608,7 +2650,7 @@
 	],
 	"variable": [
 		{
-			"id": "66f48dbb-a104-483b-8785-80facf069937",
+			"id": "d9262a26-c4a5-4334-92e4-93ed6ab77ac7",
 			"key": "BASE_URL",
 			"value": "localhost:5000"
 		}

@@ -12,7 +12,7 @@ def handle_get_post():
 		CITIES_DB,
 		request,
 		[COUNTRY_ID, NAME],
-		{COUNTRY_ID: int, NAME: str, LAT: float, LONG: float}
+		{COUNTRY_ID: [int], NAME: [str], LAT: [float, int], LONG: [float, int]}
 	)
 
 
@@ -22,7 +22,8 @@ def handle_del_put(id):
 		CITIES_DB,
 		id,
 		request,
-		{COUNTRY_ID: int, ID: int, NAME: str, LAT: float, LONG: float}
+		{COUNTRY_ID: [int], ID: [int], NAME: [str],LAT: [float, int],
+			LONG: [float, int]}
 	)
 
 

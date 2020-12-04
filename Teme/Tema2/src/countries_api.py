@@ -13,7 +13,7 @@ def handle_get_post():
 		COUNTRIES_DB,
 		request,
 		[NAME],
-		{NAME: str, LAT: float, LONG: float})
+		{NAME: [str], LAT: [float, int], LONG: [float, int]})
 
 
 @countries_api.route('/api/countries/<id>', methods=['DELETE', 'PUT'])
@@ -22,4 +22,4 @@ def handle_del_put(id):
 		COUNTRIES_DB,
 		id,
 		request,
-		{ID: int, NAME: str, LAT: float, LONG: float})
+		{ID: [int], NAME: [str], LAT: [float, int], LONG: [float, int]})
