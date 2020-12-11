@@ -1,0 +1,59 @@
+version: '3.5'
+
+
+services:
+  server:
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    build: ./src
+    image: meteo-server
+    container_name: meteo-server
+    ports:
+      - "5000:5000"
+    networks:
+      - network-api
+    environment:
+      MYSQL_PORT: 3306
+    env_file: global-variables.env
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "32000:3306"
+    volumes:
+      - ./db/meteo-db:/var/lib/mysql
+      - ./db/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - network-api
+      - network-gui
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    env_file: global-variables.env
+
+  mysql-workbench:
+    depends_on:
+      - mysql
+    image: ghcr.io/linuxserver/mysql-workbench
+    container_name: mysql-workbench
+    environment:
+      - TZ=Europe/Bucharest
+    ports:
+      - 3000:3000
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - network-gui
+
+
+networks:
+  network-api:
+    name: network-api
+  network-gui:
+    name: network-gui
+
+
+volumes:
+  meteo-db:
+    name: meteo-db
