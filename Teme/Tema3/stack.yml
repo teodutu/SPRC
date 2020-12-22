@@ -1,0 +1,35 @@
+version: '3.7'
+
+
+services:
+  broker:
+    image: eclipse-mosquitto
+    hostname: mosquitto
+    container_name: mosquitto
+    expose:
+      - "1883"
+    ports:
+      - "1883:1883"
+    networks:
+      - network-reports
+
+  server:
+    depends_on:
+      - broker
+    links:
+      - broker
+    build: ./src
+    image: server
+    container_name: server
+    ports:
+      - "5000:5000"
+    networks:
+      - network-reports
+      - network-db
+
+
+networks:
+  network-reports:
+    name: network-reports
+  network-db:
+    name: network-db
