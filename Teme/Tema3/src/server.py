@@ -1,47 +1,72 @@
 from datetime import datetime
 from json import loads
+import logging as log
 import re
 
+from influxdb import InfluxDBClient
 import paho.mqtt.client as mqtt
 
 
 # TODO: baga cu getenv
 BROKER = 'mosquitto'
+DB = 'influxdb'
 
 
 def _on_message(client, args, msg):
 	if not re.match("^[^/]+/[^/]+$", msg.topic):
 		return
 
-	print(f'Received a message by topic [{msg.topic}]')
+	log.info(f'Received a message by topic [{msg.topic}]')
 
-	for key, val in loads(msg.payload).items():
-		if type(val) != int and type(val) != float and key != "timestamp":
+	location, station = msg.topic.split('/')
+	data = loads(msg.payload)
+
+	try:
+		tstamp = datetime.strptime(data["timestamp"], '%Y-%m-%dT%H:%M:%S%z')
+		log.info(f'Data timestamp is: {tstamp}')
+	except:
+		tstamp = datetime.now().strftime('%Y-%m-%dT%H:%M:%S%z')
+		log.info('Data timestamp is NOW')
+
+	json_data = [{
+		"measurement": "sensor_measurement",
+		"tags": {
+			"location": location,
+			"station": station
+		},
+		"timestamp": tstamp
+	}]
+	fields = {}
+
+	for key, val in data.items():
+		if type(val) != int and type(val) != float:
 			continue
 
-		if key == "timestamp":
-			try:
-				val = datetime.strptime(val, '%Y-%m-%dT%H:%M:%S%z')
-			except ValueError:
-				val = datetime.now()
+		db_key = f'{msg.topic}/{key}'.replace('/', '.')
+		fields[db_key] = val
+		log.info(f'{db_key} {val}')
 
-		print(f'    {f"{msg.topic}/{key}".replace("/", ".")}: {val}')
-
-
-def _(parameter_list):
-	"""
-	docstring
-	"""
-	pass
+	if fields:
+		json_data[0]["fields"] = fields
+		args.write_points(json_data)
 
 
 def main():
-	client = mqtt.Client()
-	client.on_message = _on_message
+	log.basicConfig(
+		format='%(asctime)s %(message)s',
+		datefmt='%Y-%m-%d %H:%M:%S',
+		level=log.INFO
+	)
 
-	client.connect(BROKER)
-	client.subscribe('#')
-	client.loop_forever()
+	db_cl = InfluxDBClient(host=DB)
+	db_cl.switch_database('sensor_data')
+
+	mqtt_cl = mqtt.Client(userdata=db_cl)
+	mqtt_cl.on_message = _on_message
+
+	mqtt_cl.connect(BROKER)
+	mqtt_cl.subscribe('#')
+	mqtt_cl.loop_forever()
 
 
 if __name__ == "__main__":

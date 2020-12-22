@@ -6,7 +6,7 @@ docker rmi eclipse-mosquitto:latest python:latest server:latest \
             influxdb:latest grafana/grafana:latest
 
 docker volume rm influxdb-storage
-rm -rf db/
+rm -rf db/influxdb-storage
 
 # TODO: vezi de ce mai apar volume:
 docker volume prune -f

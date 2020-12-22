@@ -11,7 +11,7 @@ services:
     ports:
       - '1883:1883'
     networks:
-      - network-reports
+      - network-broker
 
   server:
     depends_on:
@@ -22,13 +22,14 @@ services:
     image: server
     container_name: server
     networks:
-      - network-reports
+      - network-broker
       - network-db
 
   influxdb:
     image: influxdb:latest
     container_name: influxdb
     volumes:
+      - ./db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
       - ./db/influxdb-storage:/var/lib/influxdb
     networks:
       - network-db
@@ -50,8 +51,8 @@ services:
 
 
 networks:
-  network-reports:
-    name: network-reports
+  network-broker:
+    name: network-broker
   network-db:
     name: network-db
   network-gui:
