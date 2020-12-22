@@ -7,9 +7,9 @@ services:
     hostname: mosquitto
     container_name: mosquitto
     expose:
-      - "1883"
+      - '1883'
     ports:
-      - "1883:1883"
+      - '1883:1883'
     networks:
       - network-reports
 
@@ -21,11 +21,32 @@ services:
     build: ./src
     image: server
     container_name: server
-    ports:
-      - "5000:5000"
     networks:
       - network-reports
       - network-db
+
+  influxdb:
+    image: influxdb:latest
+    container_name: influxdb
+    volumes:
+      - ./db/influxdb-storage:/var/lib/influxdb
+    networks:
+      - network-db
+      - network-gui
+
+  grafana:
+    image: grafana/grafana:latest
+    depends_on:
+      - influxdb
+    container_name: grafana
+    ports:
+      - '80:3000'
+    # volumes:
+      # - ./grafana-provisioning/:/etc/grafana/provisioning
+      # - ./db/grafana-storage:/var/lib/grafana
+    env_file: envs/grafana.env
+    networks:
+      - network-gui
 
 
 networks:
@@ -33,3 +54,10 @@ networks:
     name: network-reports
   network-db:
     name: network-db
+  network-gui:
+    name: network-gui
+
+
+volumes:
+  influxdb-storage:
+    name: influxdb-storage

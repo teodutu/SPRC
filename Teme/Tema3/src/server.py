@@ -13,7 +13,7 @@ def _on_message(client, args, msg):
 	if not re.match("^[^/]+/[^/]+$", msg.topic):
 		return
 
-	print(f'New message on topic {msg.topic}:')
+	print(f'Received a message by topic [{msg.topic}]')
 
 	for key, val in loads(msg.payload).items():
 		if type(val) != int and type(val) != float and key != "timestamp":
@@ -23,7 +23,7 @@ def _on_message(client, args, msg):
 			try:
 				val = datetime.strptime(val, '%Y-%m-%dT%H:%M:%S%z')
 			except ValueError:
-				continue
+				val = datetime.now()
 
 		print(f'    {f"{msg.topic}/{key}".replace("/", ".")}: {val}')
 
@@ -38,7 +38,6 @@ def _(parameter_list):
 def main():
 	client = mqtt.Client()
 	client.on_message = _on_message
-	client.on_disconnect =
 
 	client.connect(BROKER)
 	client.subscribe('#')
