@@ -111,3 +111,20 @@ Se implementeaza o aplicatie client-server care gestioneaza o baza de date.
 Serverul retine baza de date atat in fisiere cat si in memorie, iar clientii
 pot efectua actiuni asupra acesteia prin intermediul unor *RPC*-uri descrise
 in `README`-ul temei.
+
+
+### Tema 2 - Docker + microservicii
+Se implementeaza o aplicatie web (kms) care gestioneaza o baza de date ce
+contine temperaturi masurate la anumite coordonate. Fiecare coordonata e
+asociata unui oras, care si el se afla la randul lui intr-o tara. Aplicatia
+suporta metodele `GET`, `POST`, `PUT` si `DELETE` ce permit modificarea
+tabelelor ce contin tarile, orasele si temperaturile, cu mentiunea ca stergerile
+se fac in cascada.
+
+De asemenea, aplicatia contine si un GUI
+([mysql-workbench](https://hub.docker.com/r/linuxserver/mysql-workbench)) cu
+care se poate inspecta baza de date. Toate componentele sunt create in cadrul
+unor containere folosind `docker-compose`.
+
+Pe scurt, tema e un jeg in care e mai mult *BD* si bulaneala in
+`docker-compose.yml` decat cod scris pe bune...

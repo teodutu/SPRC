@@ -1,4 +1,3 @@
-from datetime import datetime
 from flask import json, Response, request
 from http import HTTPStatus
 from os import getenv
