@@ -5,9 +5,6 @@ services:
   broker:
     image: eclipse-mosquitto
     hostname: mosquitto
-    container_name: mosquitto
-    expose:
-      - '1883'
     ports:
       - '1883:1883'
     networks:
@@ -16,18 +13,15 @@ services:
   server:
     depends_on:
       - broker
-    links:
-      - broker
     build: ./src
     image: server
-    container_name: server
+    env_file: envs/server.env
     networks:
       - network-broker
       - network-db
 
   influxdb:
     image: influxdb:latest
-    container_name: influxdb
     volumes:
       - ./db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
       - ./db/influxdb-storage:/var/lib/influxdb
@@ -39,7 +33,6 @@ services:
     image: grafana/grafana:latest
     depends_on:
       - influxdb
-    container_name: grafana
     ports:
       - '80:3000'
     # volumes:

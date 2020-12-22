@@ -1,15 +1,11 @@
 from datetime import datetime
 from json import loads
 import logging as log
+from os import getenv
 import re
 
 from influxdb import InfluxDBClient
 import paho.mqtt.client as mqtt
-
-
-# TODO: baga cu getenv
-BROKER = 'mosquitto'
-DB = 'influxdb'
 
 
 def _on_message(client, args, msg):
@@ -58,13 +54,13 @@ def main():
 		level=log.INFO
 	)
 
-	db_cl = InfluxDBClient(host=DB)
-	db_cl.switch_database('sensor_data')
+	db_cl = InfluxDBClient(host=getenv('DB'))
+	db_cl.switch_database(getenv('DB_NAME'))
 
 	mqtt_cl = mqtt.Client(userdata=db_cl)
 	mqtt_cl.on_message = _on_message
 
-	mqtt_cl.connect(BROKER)
+	mqtt_cl.connect(getenv('BROKER'))
 	mqtt_cl.subscribe('#')
 	mqtt_cl.loop_forever()
 

@@ -1,9 +1,10 @@
 #!/bin/sh
 
-set -eu
-
 while [ 1 ]; do
-	nc -z mosquitto 1883 && nc -z influxdb 8086 && break;
+	nc -z sprc3_broker 1883 &> /dev/null \
+	&& nc -z sprc3_influxdb 8086 &> /dev/null \
+	&& break;
+
 	sleep 1;
 done
 
