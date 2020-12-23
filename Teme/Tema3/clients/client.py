@@ -1,5 +1,8 @@
 from json import dumps, load
+from numpy import arange
+from random import choice
 from sys import stdin
+from time import sleep
 
 import paho.mqtt.client as mqtt
 
@@ -20,14 +23,21 @@ def _close_connection(client):
 def main():
 	client = _create_connection()
 
-	for line in stdin:
-		if "exit\n" == line:
-			break
+	batts = list(range(90, 101))
+	temps = list(range(20, 31))
+	humids = list(range(30, 41))
+	secs = list(arange(0.5, 1.6, 0.1))
 
-		topic = line.rstrip()
-		with open("data.json") as f:
-			msg = load(f)
-		client.publish(topic, dumps(msg))
+	for station in ['A', 'B', 'C']:
+		for _ in range(3):
+			iot_data = {
+				"BAT": choice(batts),
+				"TEMP": choice(temps),
+				"HUMID": choice(humids)
+			}
+
+			client.publish("asdf/" + station, dumps(iot_data))
+			sleep(choice(secs))
 
 	_close_connection(client)
 

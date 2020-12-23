@@ -25,12 +25,12 @@ def _on_message(client, args, msg):
 		log.info('Data timestamp is NOW')
 
 	json_data = [{
-		"measurement": "sensor_measurement",
+		"measurement": "iot_measurements",
 		"tags": {
 			"location": location,
 			"station": station
 		},
-		"timestamp": tstamp
+		"time": tstamp
 	}]
 	fields = {}
 
@@ -38,9 +38,8 @@ def _on_message(client, args, msg):
 		if type(val) != int and type(val) != float:
 			continue
 
-		db_key = f'{msg.topic}/{key}'.replace('/', '.')
-		fields[db_key] = val
-		log.info(f'{db_key} {val}')
+		fields[key] = val
+		log.info(f'{f"{msg.topic}/{key}".replace("/", ".")} {val}')
 
 	if fields:
 		json_data[0]["fields"] = fields
@@ -48,10 +47,15 @@ def _on_message(client, args, msg):
 
 
 def main():
+	if getenv('DEBUG_DATA_FLOW') == "true":
+		log_level = log.INFO
+	else:
+		log_level = log.ERROR
+
 	log.basicConfig(
 		format='%(asctime)s %(message)s',
 		datefmt='%Y-%m-%d %H:%M:%S',
-		level=log.INFO
+		level=log_level
 	)
 
 	db_cl = InfluxDBClient(host=getenv('DB'))

@@ -1,3 +1,3 @@
 #! /bin/sh
 
-influx -execute 'CREATE DATABASE "sensor_data" WITH DURATION INF'
+influx -execute 'CREATE DATABASE "iot_data" WITH DURATION INF'

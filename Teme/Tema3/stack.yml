@@ -3,7 +3,7 @@ version: '3.7'
 
 services:
   broker:
-    image: eclipse-mosquitto
+    image: eclipse-mosquitto:latest
     hostname: mosquitto
     ports:
       - '1883:1883'
@@ -35,9 +35,8 @@ services:
       - influxdb
     ports:
       - '80:3000'
-    # volumes:
-      # - ./grafana-provisioning/:/etc/grafana/provisioning
-      # - ./db/grafana-storage:/var/lib/grafana
+    volumes:
+      - ./grafana-provisioning/:/etc/grafana/provisioning
     env_file: envs/grafana.env
     networks:
       - network-gui
