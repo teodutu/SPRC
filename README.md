@@ -128,3 +128,9 @@ unor containere folosind `docker-compose`.
 
 Pe scurt, tema e un jeg in care e mai mult *BD* si bulaneala in
 `docker-compose.yml` decat cod scris pe bune...
+
+### Tema 3 - Tot docker...
+Cam la fel ca tema 2, dar cu *InfluxDB* in loc de *MySQL* si cu
+[Grafana](https://grafana.com/) in loc de *mysql-workbench*. Practic aceeasi
+mizerie ca la tema 2, dar cu un cancer extra, adica *Grafana*... De ce pula mea
+facem la *SPRC* mai mult BD decat orice altceva?
