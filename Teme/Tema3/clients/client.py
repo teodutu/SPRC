@@ -27,17 +27,20 @@ def main():
 	temps = list(range(20, 31))
 	humids = list(range(30, 41))
 	secs = list(arange(0.5, 1.6, 0.1))
+	stations = ['A', 'B', 'C']
 
-	for station in ['A', 'B', 'C']:
-		for _ in range(3):
-			iot_data = {
-				"BAT": choice(batts),
-				"TEMP": choice(temps),
-				"HUMID": choice(humids)
-			}
+	while True:
+		iot_data = {
+			'BAT': choice(batts),
+			'TEMP': choice(temps),
+			'HUMID': choice(humids)
+		}
 
-			client.publish("asdf/" + station, dumps(iot_data))
-			sleep(choice(secs))
+		station = choice(stations)
+		client.publish('UPB/' + station, dumps(iot_data))
+		print(f'Station {station} published:\n{dumps(iot_data, indent=4)}\n')
+
+		sleep(choice(secs))
 
 	_close_connection(client)
 

@@ -15,16 +15,16 @@
 	"editable": true,
 	"gnetId": null,
 	"graphTooltip": 0,
-	"id": 1,
+	"id": 2,
 	"links": [],
 	"panels": [
 	  {
 		"datasource": "InfluxDB",
-		"description": "",
 		"fieldConfig": {
 		  "defaults": {
 			"custom": {
 			  "align": "left",
+			  "displayMode": "auto",
 			  "filterable": false
 			},
 			"decimals": 2,
@@ -43,7 +43,20 @@
 			  ]
 			}
 		  },
-		  "overrides": []
+		  "overrides": [
+			{
+			  "matcher": {
+				"id": "byName",
+				"options": "Time"
+			  },
+			  "properties": [
+				{
+				  "id": "custom.width",
+				  "value": 174
+				}
+			  ]
+			}
+		  ]
 		},
 		"gridPos": {
 		  "h": 8,
@@ -52,29 +65,28 @@
 		  "y": 0
 		},
 		"id": 4,
-		"interval": "",
 		"options": {
+		  "frameIndex": 5,
 		  "showHeader": true,
-		  "sortBy": []
+		  "sortBy": [
+			{
+			  "desc": true,
+			  "displayName": "Time"
+			}
+		  ]
 		},
 		"pluginVersion": "7.3.6",
 		"targets": [
 		  {
-			"groupBy": [
-			  {
-				"params": [
-				  "station"
-				],
-				"type": "tag"
-			  }
-			],
-			"measurement": "/.*\\.BAT/",
+			"alias": "$0.$1",
+			"groupBy": [],
+			"measurement": "/.*/",
 			"orderByTime": "ASC",
 			"policy": "autogen",
-			"query": "SELECT last(\"BAT\") AS \"Current\", min(\"BAT\") AS \"Min\", max(\"BAT\") AS \"Max\", mean(\"BAT\") AS \"Avg\" FROM \"autogen\".\"iot_measurements\" WHERE $timeFilter GROUP BY \"station\"",
+			"query": "SELECT \"value\" FROM \"autogen\"./.*/ WHERE (\"location\" = 'UPB') AND $timeFilter",
 			"rawQuery": false,
 			"refId": "A",
-			"resultFormat": "table",
+			"resultFormat": "time_series",
 			"select": [
 			  [
 				{
@@ -82,103 +94,25 @@
 					"value"
 				  ],
 				  "type": "field"
-				},
-				{
-				  "params": [],
-				  "type": "last"
-				},
-				{
-				  "params": [
-					"Current"
-				  ],
-				  "type": "alias"
-				}
-			  ],
-			  [
-				{
-				  "params": [
-					"value"
-				  ],
-				  "type": "field"
-				},
-				{
-				  "params": [],
-				  "type": "min"
-				},
-				{
-				  "params": [
-					"Min"
-				  ],
-				  "type": "alias"
-				}
-			  ],
-			  [
-				{
-				  "params": [
-					"value"
-				  ],
-				  "type": "field"
-				},
-				{
-				  "params": [],
-				  "type": "max"
-				},
-				{
-				  "params": [
-					"Max"
-				  ],
-				  "type": "alias"
-				}
-			  ],
-			  [
-				{
-				  "params": [
-					"value"
-				  ],
-				  "type": "field"
-				},
-				{
-				  "params": [],
-				  "type": "mean"
-				},
-				{
-				  "params": [
-					"Avg"
-				  ],
-				  "type": "alias"
 				}
 			  ]
 			],
-			"tags": []
+			"tags": [
+			  {
+				"key": "location",
+				"operator": "=",
+				"value": "UPB"
+			  }
+			]
 		  }
 		],
 		"timeFrom": null,
 		"timeShift": null,
-		"title": "Statistic Aggregation",
+		"title": "Panel Title",
 		"transformations": [
 		  {
-			"id": "filterFieldsByName",
-			"options": {
-			  "include": {
-				"names": [
-				  "station",
-				  "Current",
-				  "Min",
-				  "Max",
-				  "Avg"
-				]
-			  }
-			}
-		  },
-		  {
-			"id": "organize",
-			"options": {
-			  "excludeByName": {},
-			  "indexByName": {},
-			  "renameByName": {
-				"station": "Metric"
-			  }
-			}
+			"id": "seriesToColumns",
+			"options": {}
 		  }
 		],
 		"type": "table"
@@ -188,28 +122,11 @@
 		"bars": false,
 		"dashLength": 10,
 		"dashes": false,
-		"datasource": "InfluxDB",
+		"datasource": null,
 		"description": "",
 		"fieldConfig": {
 		  "defaults": {
-			"custom": {
-			  "align": null,
-			  "filterable": false
-			},
-			"mappings": [],
-			"thresholds": {
-			  "mode": "absolute",
-			  "steps": [
-				{
-				  "color": "green",
-				  "value": null
-				},
-				{
-				  "color": "red",
-				  "value": 80
-				}
-			  ]
-			}
+			"custom": {}
 		  },
 		  "overrides": []
 		},
@@ -249,7 +166,7 @@
 		"steppedLine": false,
 		"targets": [
 		  {
-			"alias": "$tag_station",
+			"alias": "$0.$1",
 			"groupBy": [
 			  {
 				"params": [
@@ -259,21 +176,15 @@
 			  },
 			  {
 				"params": [
-				  "station"
-				],
-				"type": "tag"
-			  },
-			  {
-				"params": [
 				  "previous"
 				],
 				"type": "fill"
 			  }
 			],
-			"measurement": "/.*\\.BAT/",
+			"measurement": "/.*/",
 			"orderByTime": "ASC",
 			"policy": "autogen",
-			"query": "SELECT mean(\"BAT\") FROM \"autogen\".\"iot_measurements\" WHERE $timeFilter GROUP BY time(1s), \"station\" fill(null)",
+			"query": "SELECT mean(*) AS \".\" FROM \"autogen\".\"iot_measurements\" WHERE (\"location\" = 'UPB') AND $timeFilter GROUP BY time(1s), \"station\" fill(null)",
 			"rawQuery": false,
 			"refId": "A",
 			"resultFormat": "time_series",
@@ -281,24 +192,36 @@
 			  [
 				{
 				  "params": [
-					"value"
+					"*"
 				  ],
 				  "type": "field"
 				},
 				{
 				  "params": [],
 				  "type": "mean"
+				},
+				{
+				  "params": [
+					"."
+				  ],
+				  "type": "alias"
 				}
 			  ]
 			],
-			"tags": []
+			"tags": [
+			  {
+				"key": "location",
+				"operator": "=",
+				"value": "UPB"
+			  }
+			]
 		  }
 		],
 		"thresholds": [],
 		"timeFrom": null,
 		"timeRegions": [],
 		"timeShift": null,
-		"title": "Evolutia Incarcarii Bateriilor",
+		"title": "Grafic Date",
 		"tooltip": {
 		  "shared": true,
 		  "sort": 0,
@@ -315,12 +238,11 @@
 		},
 		"yaxes": [
 		  {
-			"decimals": null,
 			"format": "short",
-			"label": "Battery Level",
+			"label": null,
 			"logBase": 1,
-			"max": "100",
-			"min": "0",
+			"max": null,
+			"min": null,
 			"show": true
 		  },
 		  {
@@ -329,7 +251,7 @@
 			"logBase": 1,
 			"max": null,
 			"min": null,
-			"show": false
+			"show": true
 		  }
 		],
 		"yaxis": {
@@ -338,7 +260,7 @@
 		}
 	  }
 	],
-	"refresh": "30m",
+	"refresh": "30s",
 	"schemaVersion": 26,
 	"style": "dark",
 	"tags": [],
@@ -346,12 +268,12 @@
 	  "list": []
 	},
 	"time": {
-	  "from": "now-2d",
+	  "from": "now-5m",
 	  "to": "now"
 	},
 	"timepicker": {},
 	"timezone": "",
-	"title": "Battery Dashboard",
-	"uid": "-mLGYObMk",
-	"version": 3
+	"title": "UPB IoT Data",
+	"uid": "4oebDFxMk",
+	"version": 4
   }

@@ -13,6 +13,7 @@ services:
   server:
     depends_on:
       - broker
+      - influxdb
     build: ./src
     image: server
     env_file: envs/server.env

@@ -1,15 +1,15 @@
 from datetime import datetime
-from json import loads
+from json import loads, dumps
 import logging as log
 from os import getenv
-import re
+from re import match
 
 from influxdb import InfluxDBClient
 import paho.mqtt.client as mqtt
 
 
 def _on_message(client, args, msg):
-	if not re.match("^[^/]+/[^/]+$", msg.topic):
+	if not match(r'^[^/]+/[^/]+$', msg.topic):
 		return
 
 	log.info(f'Received a message by topic [{msg.topic}]')
@@ -18,36 +18,38 @@ def _on_message(client, args, msg):
 	data = loads(msg.payload)
 
 	try:
-		tstamp = datetime.strptime(data["timestamp"], '%Y-%m-%dT%H:%M:%S%z')
+		tstamp = datetime.strptime(data['timestamp'], '%Y-%m-%dT%H:%M:%S%z')
 		log.info(f'Data timestamp is: {tstamp}')
 	except:
 		tstamp = datetime.now().strftime('%Y-%m-%dT%H:%M:%S%z')
 		log.info('Data timestamp is NOW')
 
-	json_data = [{
-		"measurement": "iot_measurements",
-		"tags": {
-			"location": location,
-			"station": station
-		},
-		"time": tstamp
-	}]
-	fields = {}
+	json_data = []
 
 	for key, val in data.items():
 		if type(val) != int and type(val) != float:
 			continue
 
-		fields[key] = val
-		log.info(f'{f"{msg.topic}/{key}".replace("/", ".")} {val}')
+		json_data.append({
+			'measurement': f'{station}.{key}',
+			'tags': {
+				'location': location,
+				'station': station
+			},
+			'time': tstamp,
+			'fields': {
+				'value': val
+			}
+		})
 
-	if fields:
-		json_data[0]["fields"] = fields
+		log.info(f'{location}.{station}.{key} {val}')
+
+	if json_data:
 		args.write_points(json_data)
 
 
 def main():
-	if getenv('DEBUG_DATA_FLOW') == "true":
+	if getenv('DEBUG_DATA_FLOW') == 'true':
 		log_level = log.INFO
 	else:
 		log_level = log.ERROR
@@ -70,5 +72,4 @@ def main():
 
 
 if __name__ == "__main__":
-	# TODO: iese cu codul 137. Fa-l sa iasa frumos
 	main()
