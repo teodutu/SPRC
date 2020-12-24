@@ -3,7 +3,7 @@
 
 ## Rulare
 Pentru a crea imaginea serverului (singura componenta a aplicatiei care nu este
-o imageine de pe [hub.docker.com](hub.docker.com)) si rula aplicatia se poate
+o imagine de pe [hub.docker.com](hub.docker.com)) si rula aplicatia se poate
 folosi scriptul `run.sh`. Dupa ce imaginea serverului a fost creata, aplicatia
 poate fi pornita cu comanda `docker stack deploy -c stack.yml <nume_aplicatie>`
 Aplicatia poate fi oprita folosind comanda `docker stack rm <nume_aplicatie>`.
@@ -18,8 +18,8 @@ Aplicatia contine cele 4 componente specificate in enunt:
 [Grafana](https://hub.docker.com/r/grafana/grafana/)
 
 ### Brokerul
-Foloseste imaginea *eclipse-mosquitto* intrucat eram deja relativ familiar cu ea
-de la laboratorul de *MQTT*. Brokerul expune portul `1883`.
+Am folosit imaginea *eclipse-mosquitto* intrucat eram deja relativ familiar cu
+ea de la laboratorul de *MQTT*. Brokerul expune portul `1883`.
 
 ### Arbitrul
 Este in acelasi timp un client al brokerului si un server pentru baza de date.
@@ -47,8 +47,8 @@ Am ales aceste taguri deoarece e nevoie de locatia `"UPB"` pentru dashboardul
 "UPB IoT Data" si de statie pentru dashboardul "Battery Dashboard".
 
 ### Baza de date
-Se foloseste un script (`db/init-db.sh`) care initializeaza creeaza baza de date
-`iot_data` cu timpul de retentie infinit.
+Se foloseste un script (`db/init-db.sh`) care creeaza baza de date `iot_data` cu
+timpul de retentie a datelor infinit.
 
 ### Grafana
 Dashboardurile sunt configurate in folderul `grafana-provisioning/dashboards`.
