@@ -38,7 +38,7 @@ def _on_message(client, args, msg):
 			},
 			'time': tstamp,
 			'fields': {
-				'value': val
+				'value': float(val)
 			}
 		})
 

@@ -7,4 +7,3 @@ sleep 10
 docker image prune
 
 docker volume prune
-rm -rf db/influxdb-storage

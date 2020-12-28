@@ -1,10 +1,9 @@
-version: '3.7'
+version: '3.5'
 
 
 services:
   broker:
     image: eclipse-mosquitto:latest
-    hostname: mosquitto
     ports:
       - '1883:1883'
     networks:
@@ -25,7 +24,7 @@ services:
     image: influxdb:latest
     volumes:
       - ./db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
-      - ./db/influxdb-storage:/var/lib/influxdb
+      - influxdb-storage:/var/lib/influxdb
     networks:
       - network-db
       - network-gui

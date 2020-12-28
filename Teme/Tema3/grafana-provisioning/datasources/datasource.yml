@@ -5,6 +5,6 @@ datasources:
   type: influxdb
   access: proxy
   database: iot_data
-  url: http://influxdb:8086
+  url: sprc3_influxdb:8086
   isDefault: true
   editable: true
