@@ -8,6 +8,10 @@ folosi scriptul `run.sh`. Dupa ce imaginea serverului a fost creata, aplicatia
 poate fi pornita cu comanda `docker stack deploy -c stack.yml <nume_aplicatie>`
 Aplicatia poate fi oprita folosind comanda `docker stack rm <nume_aplicatie>`.
 
+Inainte de rulare, trebuie definita variabila de mediu `SPRC_DVP`, ce va
+reprezenta directorul in care se va salva volumul bazei de date. Mai multe
+detalii sunt prezentate in [sectiunea aferenta bazei de date](#baza-de-date)
+
 
 ## Structura
 Aplicatia contine cele 4 componente specificate in enunt:
@@ -48,7 +52,9 @@ Am ales aceste taguri deoarece e nevoie de locatia `"UPB"` pentru dashboardul
 
 ### Baza de date
 Se foloseste un script (`db/init-db.sh`) care creeaza baza de date `iot_data` cu
-timpul de retentie a datelor infinit.
+timpul de retentie a datelor infinit. Volumul folosit de aceasta se afla in
+locatia `${SPRC_DVP}/iot_data_influxdb-storage`, unde variabila de mediu
+`SPRC_DVP` trebuie definita a priori.
 
 ### Grafana
 Dashboardurile sunt configurate in folderul `grafana-provisioning/dashboards`.
@@ -59,4 +65,5 @@ Credentialele de logare sunt specificate in fisierul `envs/grafana.env`.
 Pentru a se putea testa aplicatia prin intermediul dashboardurilor oferite de
 *Grafana*, se poate folosi clientul definit in `clients/test_client.py`. Acesta
 adauga metricile `BAT`, `HUM` si `TEMP` de la locatia `"UPB"` cu valori
-aleatoare. Statiile sunt tot valori aleatoare din multimea `{"A", "B", "C"}`.
+aleatoare din cate un interval pentru fiecare metrica. Statiile sunt tot valori
+aleatoare din multimea `{"A", "B", "C"}`.

@@ -21,7 +21,7 @@ def _on_message(client, args, msg):
 		tstamp = datetime.strptime(data['timestamp'], '%Y-%m-%dT%H:%M:%S%z')
 		log.info(f'Data timestamp is: {tstamp}')
 	except:
-		tstamp = datetime.now().strftime('%Y-%m-%dT%H:%M:%S%z')
+		tstamp = datetime.now()
 		log.info('Data timestamp is NOW')
 
 	json_data = []
@@ -36,7 +36,7 @@ def _on_message(client, args, msg):
 				'location': location,
 				'station': station
 			},
-			'time': tstamp,
+			'time': tstamp.strftime('%Y-%m-%dT%H:%M:%S%z'),
 			'fields': {
 				'value': float(val)
 			}

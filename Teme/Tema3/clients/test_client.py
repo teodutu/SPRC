@@ -33,7 +33,7 @@ def main():
 		iot_data = {
 			'BAT': choice(batts),
 			'TEMP': choice(temps),
-			'HUMID': choice(humids)
+			'HUMID': choice(humids),
 		}
 
 		station = choice(stations)

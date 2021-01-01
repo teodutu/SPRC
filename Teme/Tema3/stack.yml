@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.7'
 
 
 services:
@@ -24,7 +24,9 @@ services:
     image: influxdb:latest
     volumes:
       - ./db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
-      - influxdb-storage:/var/lib/influxdb
+      - type: bind
+        source: ${SPRC_DVP}/iot_data_influxdb-storage
+        target: /var/lib/influxdb
     networks:
       - network-db
       - network-gui
@@ -49,8 +51,3 @@ networks:
     name: network-db
   network-gui:
     name: network-gui
-
-
-volumes:
-  influxdb-storage:
-    name: influxdb-storage
