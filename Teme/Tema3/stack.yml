@@ -25,7 +25,7 @@ services:
     volumes:
       - ./db/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
       - type: bind
-        source: ${SPRC_DVP}/iot_data_influxdb-storage
+        source: ${SPRC_DVP}/influxdb-storage
         target: /var/lib/influxdb
     networks:
       - network-db
@@ -38,6 +38,9 @@ services:
     ports:
       - '80:3000'
     volumes:
+      - type: bind
+        source: ${SPRC_DVP}/grafana-storage
+        target: /var/lib/grafana
       - ./grafana-provisioning/:/etc/grafana/provisioning
     env_file: envs/grafana.env
     networks:
