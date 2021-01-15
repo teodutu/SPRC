@@ -1,0 +1,40 @@
+<project name="NTPDate" default="execute" basedir=".">
+
+	<target name="clean">
+		<delete dir="build"/>
+	</target>
+
+	<target name="init">
+
+		<property name="ntp.enabled" value="true"/>
+		<property name="ntp.TIME_SERVERS" value="0.pool.ntp.org,1.pool.ntp.org,2.pool.ntp.org,3.pool.ntp.org"/>
+
+		<echo message="${line.separator}Sisteme de programe pentru retele de calculatoare
+			${line.separator}
+			${line.separator}Copyright (C) 2008 Ciprian Dobre &amp; Florin Pop
+			${line.separator}Univerity Politehnica of Bucharest, Romania
+			${line.separator}
+			${line.separator}"/>
+		<echo message="Initializing"/>
+		<mkdir dir="build"/>
+		<path id="compile.classpath">
+			<pathelement location="build"/>
+		</path>
+	</target>
+
+	<target name="build" depends="init">
+		<echo message="Compiling"/>
+		<javac modulepath="/usr/lib/jvm/javafx-sdk-15.0.1/lib/" srcdir="." destdir="build" nowarn="off" debug="true" optimize="true" verbose="false">
+			<compilerarg line="--add-modules javafx.base,javafx.controls,javafx.fxml,javafx.graphics,javafx.media,javafx.swing,javafx.web"/>
+		</javac>
+	</target>
+
+	<target name="execute" depends="build">
+		<java classname="example3.NTPClient" fork="true">
+			<classpath refid="compile.classpath" />
+			<jvmarg value="-Dntp.enabled=${ntp.enabled}"/>
+			<jvmarg value="-Dntp.TIME_SERVERS=${ntp.TIME_SERVERS}"/>
+		</java>
+	</target>
+
+</project>

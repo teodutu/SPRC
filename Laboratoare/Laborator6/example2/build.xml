@@ -1,0 +1,38 @@
+<project name="SharedMemory" default="execute" basedir=".">
+	
+	<target name="clean">
+		<delete dir="build"/>
+	</target>
+	
+	<target name="init">
+		
+		<property name="env.discoveryAddress" value="141.85.99.170"/>
+		<property name="env.discoveryPort" value="4115"/>
+		
+		<echo message="${line.separator}Sisteme de programe pentru retele de calculatoare 
+			${line.separator}
+			${line.separator}Copyright (C) 2008 Ciprian Dobre &amp; Florin Pop 
+			${line.separator}Univerity Politehnica of Bucharest, Romania 
+			${line.separator}
+			${line.separator}"/>
+		<echo message="Initializing"/>
+		<mkdir dir="build"/>
+		<path id="compile.classpath">
+			<pathelement location="build"/>
+		</path>
+	</target>
+	
+	<target name="build" depends="init">
+		<echo message="Compiling"/>
+		<javac srcdir="." destdir="build" nowarn="off" debug="true" optimize="true" verbose="false"/>
+	</target>
+
+	<target name="execute" depends="build">
+		<java classname="example2.ClientTest" fork="true">
+			<classpath refid="compile.classpath" />
+			<arg value="${env.discoveryAddress}"/>
+			<arg value="${env.discoveryPort}"/>
+		</java>
+	</target>
+	
+</project>

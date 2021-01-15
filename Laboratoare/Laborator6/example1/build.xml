@@ -1,0 +1,38 @@
+<project name="WebCache" default="execute" basedir=".">
+	
+	<target name="clean">
+		<delete dir="build"/>
+	</target>
+	
+	<target name="init">
+		
+		<property name="env.maxStorageSpace" value="20KB"/>
+		<property name="env.maxTimeToKeep" value="20s"/>
+		
+		<echo message="${line.separator}Sisteme de programe pentru retele de calculatoare 
+			${line.separator}
+			${line.separator}Copyright (C) 2008 Ciprian Dobre &amp; Florin Pop 
+			${line.separator}Univerity Politehnica of Bucharest, Romania 
+			${line.separator}
+			${line.separator}"/>
+		<echo message="Initializing"/>
+		<mkdir dir="build"/>
+		<path id="compile.classpath">
+			<pathelement location="build"/>
+		</path>
+	</target>
+	
+	<target name="build" depends="init">
+		<echo message="Compiling"/>
+		<javac srcdir="." destdir="build" nowarn="off" debug="true" optimize="true" verbose="false"/>
+	</target>
+
+	<target name="execute" depends="build">
+		<java classname="example1.ClientTest" fork="true">
+			<classpath refid="compile.classpath" />
+			<arg value="${env.maxStorageSpace}"/>
+			<arg value="${env.maxTimeToKeep}"/>
+		</java>
+	</target>
+	
+</project>
