@@ -24,10 +24,14 @@ import java.util.Random;
  *
  */
 public class ClientTest {
-
 	// cateva adrese web predefinite
 	private static final String[] urls = {
-		"http://google.com", "http://www.yahoo.com", "http://www.pub.ro", "http://neverssl.com/", "http://www.baidu.com/"
+		"http://google.com",
+		"http://www.yahoo.com",
+		"http://acs.pub.ro/~cpop/orare_sem1",
+		"http://acs.pub.ro/~cpop/orare_sem2",
+		"http://neverssl.com",
+		"http://www.baidu.com"
 	};
 
 	/**
@@ -49,10 +53,11 @@ public class ClientTest {
 		}
 
 		long nr = Long.parseLong(buf.toString());
-		if (poz >= size.length()) return nr;
-		String unit = size.substring(poz);
+		if (poz >= size.length()) {
+			return nr;
+		}
 
-		return switch (unit) {
+		return switch (size.substring(poz)) {
 			case "KB" -> nr * 1024L;
 			case "MB" -> nr * 1024L * 1024L;
 			case "GB" -> nr * 1024L * 1024L * 1024L;
@@ -79,10 +84,11 @@ public class ClientTest {
 		}
 
 		long nr = Long.parseLong(buf.toString());
-		if (poz >= time.length()) return nr;
-		String unit = time.substring(poz);
+		if (poz >= time.length()) {
+			return nr;
+		}
 
-		return switch (unit) {
+		return switch (time.substring(poz)) {
 			case "s" -> nr * 1000L;
 			case "m" -> nr * 1000L * 1000L;
 			case "h" -> nr * 1000L * 1000L * 1000L;
@@ -103,20 +109,55 @@ public class ClientTest {
 		long size = convertSize(args[0]);
 		long time = convertTime(args[1]);
 
-		System.out.println("Client started with maxStorageSpace="+size+" and maxTimeToKeep="+time);
+		System.out.println(
+			"Client started with maxStorageSpace=" + size
+				+ " and maxTimeToKeep=" + time
+		);
 
 		WebCache cache = new WebCache(size, time);
-		Random r = new Random(System.currentTimeMillis());
 
-		while (true) { // incercam cateva citiri aleatoare de adrese folosind cache-ul web
-			int poz = r.nextInt(urls.length);
-			String page = cache.requestURL(urls[poz]);
-			System.out.println(page);
+		// Cerem "http://acs.pub.ro/~cpop/orare_sem1",
+		// "http://acs.pub.ro/~cpop/orare_sem2",
+		// si "http://www.baidu.com"
+		cache.requestURL(urls[2]);
+		cache.requestURL(urls[3]);
+		cache.requestURL(urls[2]);
+		cache.requestURL(urls[2]);
+		cache.requestURL(urls[5]);
+		cache.requestURL(urls[2]);
+		// Frecventele sunt:
+		// http://acs.pub.ro/~cpop/orare_sem1: 4
+		// http://acs.pub.ro/~cpop/orare_sem2: 1
+		// http://www.baidu.com: 1
 
-			try {
-				Thread.sleep(1000);
-			} catch (Throwable t) { }
-		}
+		// Cerem "http://neverssl.com"; se elimina "http://www.baidu.com" din
+		// cache
+		cache.requestURL(urls[4]);
+		cache.requestURL(urls[3]);
+		cache.requestURL(urls[4]);
+		// Frecventele sunt:
+		// http://acs.pub.ro/~cpop/orare_sem1: 4
+		// http://acs.pub.ro/~cpop/orare_sem2: 2
+		// http://neverssl.com: 2
+
+		// Cerem "http://www.yahoo.com"; inca este loc in cache
+		// Facem multe cereri pentru a-i creste frecventa
+		cache.requestURL(urls[1]);
+		cache.requestURL(urls[1]);
+		cache.requestURL(urls[1]);
+		cache.requestURL(urls[1]);
+		cache.requestURL(urls[1]);
+		// Frecventele sunt:
+		// "http://www.yahoo.com": 5
+		// http://acs.pub.ro/~cpop/orare_sem1: 4
+		// http://acs.pub.ro/~cpop/orare_sem2: 2
+		// http://neverssl.com: 2
+
+		// Cerem "http://google.com"; pagina este mare si se scot pagini din
+		// cache, in ordinea frecventelor:
+		// - "http://neverssl.com",
+		// - "http://acs.pub.ro/~cpop/orare_sem2",
+		// - "http://acs.pub.ro/~cpop/orare_sem1"
+		cache.requestURL(urls[0]);
 	}
-
 } // end of class ClientTest

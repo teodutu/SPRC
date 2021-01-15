@@ -29,7 +29,6 @@ import java.util.LinkedList;
 
 /**
  * Clasa ce implementeaza un cache de web
- *
  */
 public class WebCache {
 	// maparea intrarilor cache curent stiute de cache-ul nostru
@@ -44,19 +43,22 @@ public class WebCache {
 	private long maxSizeOnDisk = -1;
 
 	/**
-	 * Constructorul primeste ca parametrii dimensiunea maxima pe disc si timpul maxim de pastrare a unui continut web.
+	 * Constructorul primeste ca parametrii dimensiunea maxima pe disc si timpul
+	 * maxim de pastrare a unui continut web.
 	 */
 	public WebCache(long maxSizeOnDisk, long maxTimeToKeepPage) {
 		this.maxSizeOnDisk = maxSizeOnDisk;
 		this.maxTimeToKeepPage = maxTimeToKeepPage;
-		String workingDir = System.getProperty("user.home")+File.separatorChar+"cache_test";
+		String workingDir = System.getProperty("user.home")
+			+ File.separatorChar + "cache_test";
 		cacheFile = new WebCacheFile(workingDir);
 		// automat este citit continutul cache anterior stocat pe disc (la o repornire cache-ul nu se pierde, se refoloseste)
 		cache = cacheFile.init();
 	}
 
 	/**
-	 * Singura metoda pusa la dispozitie de cache - intoarce continutul unei pagini web pe baza unei adrese primita ca parametru
+	 * Singura metoda pusa la dispozitie de cache - intoarce continutul unei
+	 * pagini web pe baza unei adrese primita ca parametru
 	 * @param url
 	 * @return
 	 */
@@ -65,16 +67,17 @@ public class WebCache {
 		purgeOldPages();
 
 		if (cache.containsKey(url)) { // daca deja avem in cache continutul
-			return ((WebCacheEntry)cache.get(url)).getContent(); // atunci returnam valoarea din memorie
+			System.out.println("Web page at URL " + url + " was cached");
+			return cache.get(url).getContent(); // atunci returnam valoarea din memorie
 		}
 
 		// altfel facem o interogare a adresei pentru continutul fresh al paginii web
 		String content = getWebPage(url);
-		if (content == null) {// daca interogarea a esuat
+		if (content == null) { // daca interogarea a esuat
 			return content;
 		}
-		// formam o noua intrare cache
 
+		// formam o noua intrare cache
 		WebCacheEntry entry = new WebCacheEntry(url);
 		entry.setContent(content);
 		// o adaugam intre intrarile pastrate in memorie
@@ -85,17 +88,24 @@ public class WebCache {
 		// verificam daca cu ce am adaugat in cache nu am depasit dimensiunea maxima a cache-ului pe disc
 		if (maxSizeOnDisk > 0L) {
 			long sizeOnDisk = cacheFile.getSizeOnDisk();
+			System.out.println(sizeOnDisk + " vs " + maxSizeOnDisk);
 
 			while (sizeOnDisk > maxSizeOnDisk) { // cat timp am depasit mai stergem intrari
-				// remove the oldest accessed entry ...
+				// remove the least accessed entry ...
 				WebCacheEntry wce = null;
-				for (Enumeration en = cache.keys(); en.hasMoreElements(); ) {
+				for (Enumeration en = cache.keys(); en.hasMoreElements();) {
 					String su = (String)en.nextElement();
 					WebCacheEntry e = (WebCacheEntry)cache.get(su);
+
+					if (e.getURL().equals(url)) {
+						continue;
+					}
+
 					if (wce == null) {
 						wce = e;
-					} else if (wce.getFreq() < e.getFreq()){
-						 wce = e; // alegem pagina cea mai veche accesata pentru stergere (LRU)
+					} else if ( wce.getFrequency() > e.getFrequency()) {
+						// alegem pagina cu cele mai putine accesari pentru stergere (LFU)
+						wce = e;
 					}
 				}
 				if (wce == null) {
@@ -104,7 +114,10 @@ public class WebCache {
 
 				// stergem respectiva intrare din cache
 				cache.remove(wce.getURL());
-				cacheFile.removeEntry(entry);
+				cacheFile.removeEntry(wce);
+				System.out.println(
+					"Removed URL " + wce.getURL() + " from cache"
+				);
 
 				long newSizeOnDisk = cacheFile.getSizeOnDisk();
 				if (sizeOnDisk == newSizeOnDisk) {
@@ -114,11 +127,14 @@ public class WebCache {
 				sizeOnDisk = newSizeOnDisk;
 			}
 		}
+
+		System.out.println("Made request to server for " + url);
 		return content;
 	}
 
 	/**
-	 * Metoda se foloseste pentru a sterge intrarile din cache ce sunt prea vechi... prin stergere fortam o actualizare a continutului paginii
+	 * Metoda se foloseste pentru a sterge intrarile din cache ce sunt prea
+	 * vechi... prin stergere fortam o actualizare a continutului paginii
 	 */
 	private void purgeOldPages() {
 		if (maxTimeToKeepPage <= 0L) {
@@ -145,7 +161,9 @@ public class WebCache {
 	}
 
 	/**
-	 * Metoda ce intoarce o pagina web pe unei adrese web - interogare a serverului web de la respectiva adresa
+	 * Metoda ce intoarce o pagina web pe unei adrese web - interogare a
+	 * serverului web de la respectiva adresa
+	 *
 	 * @param u Adresa web
 	 * @return Continutul paginii web corespunzatoare
 	 */
@@ -167,9 +185,9 @@ public class WebCache {
 		try {
 			// incercam accesarea URL-ului
 			URLConnection urlConnection = url.openConnection();
-//			urlConnection.setConnectTimeout(10 * 1000);
 			urlConnection.setAllowUserInteraction(false);
 			InputStream urlStream = url.openStream();
+
 			// si citirea continutului paginii web de la respectiva adresa
 			byte[] b = new byte[1000];
 			int numRead = urlStream.read(b);

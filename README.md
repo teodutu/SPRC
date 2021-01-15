@@ -104,6 +104,12 @@ Se foloseste protocolul [MQTT](https://mqtt.org/) pentru a simula un chat de
 Alt lab degeaba.
 
 
+### Laborator 6 - Web Cache in Java
+Primul lab mai de Doamne-ajuta. Se modifica cache-ul **LRU** dat in schelet cu
+unul **LFU** si se adauga o serie de cereri web care sa demonstreze aceasta
+politica.
+
+
 
 ## Teme
 ### Tema 1 - RPC

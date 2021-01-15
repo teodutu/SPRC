@@ -32,10 +32,8 @@ public class WebCacheEntry implements Serializable {
 	private String content;
 	// cand a fost facuta ultima actualizare a continutului acestei intrari din cache
 	private long writeDate = -1;
-	// cand a fost accesata ultima data aceasta intrare
-	private long readDate = -1;
 
-	private long freq = 0;
+	private long frequency = 1;
 
 	/**
 	 * Constructorul clasei.
@@ -53,16 +51,10 @@ public class WebCacheEntry implements Serializable {
 		this.content = content;
 
 		// automat setam si data ultimei accesari si pe cea a ultimei actualizari
-		++freq;
-		writeDate = readDate = System.currentTimeMillis();
+		++frequency;
+		writeDate = System.currentTimeMillis();
 	}
 
-	/**
-	 * Metoda intoarce data ultimei accesari a intrarii din cache.
-	 */
-	public long getLastRead() {
-		return readDate;
-	}
 
 	/**
 	 * Metoda intoarce data ultimei actualizari a intrarii din cache.
@@ -77,14 +69,13 @@ public class WebCacheEntry implements Serializable {
 	 */
 	public String getContent() {
 		// se actualizeaza si data ultimei accesari
-		readDate = System.currentTimeMillis();
-		++freq;
+		++frequency;
 
 		return content;
 	}
 
-	public long getFreq() {
-		return freq;
+	public long getFrequency() {
+		return frequency;
 	}
 
 	/**

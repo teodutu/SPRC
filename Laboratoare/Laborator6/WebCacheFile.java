@@ -167,7 +167,7 @@ public class WebCacheFile {
 	 * @param entry Intrarea ce se doreste a fi inlaturata.
 	 */
 	public void removeEntry(WebCacheEntry entry) {
-		String fileName = workingDir+File.separatorChar+formName(entry);
+		String fileName = workingDir + File.separatorChar + formName(entry);
 		File f = new File(fileName);
 		f.delete();
 	}
