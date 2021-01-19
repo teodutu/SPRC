@@ -53,14 +53,13 @@ Am ales aceste taguri deoarece e nevoie de locatia `"UPB"` pentru dashboardul
 ### Baza de date
 Se foloseste un script (`db/init-db.sh`) care creeaza baza de date `iot_data` cu
 timpul de retentie a datelor infinit. Volumul folosit de aceasta se afla in
-locatia `${SPRC_DVP}/influxdb-storage`, unde variabila de mediu `SPRC_DVP`
-trebuie definita a priori.
+locatia `./db/influxdb-storage`.
 
 ### Grafana
 Dashboardurile sunt configurate in folderul `grafana-provisioning/dashboards`.
 Credentialele de logare sunt specificate in fisierul `envs/grafana.env`.
 Eventualele modificari facute de utilizator sunt salvate in volumul
-`${SPRC_DVP}/grafana-storage`.
+`./db/grafana-storage`.
 
 
 ## Testare
