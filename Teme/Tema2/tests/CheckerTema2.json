@@ -1,0 +1,1627 @@
+{
+	"info": {
+		"_postman_id": "89b39520-0e3e-427f-b138-ce292847ccd3",
+		"name": "Tema2 SPRC",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Countries",
+			"item": [
+				{
+					"name": "Add Country v2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let initialized = pm.variables.get(\"ADD_COUNTRY_INIT\");\r",
+									"\r",
+									"if (!initialized) {\r",
+									"    const countries = [\r",
+									"        {\r",
+									"            \"nume\": \"Romania\",\r",
+									"            \"lat\": 30.50,\r",
+									"            \"lon\": 40.20\r",
+									"        },\r",
+									"        {\r",
+									"            \"nume\": \"UK\",\r",
+									"            \"lat\": 20.10,\r",
+									"            \"lon\": 40.20\r",
+									"        },\r",
+									"        {\r",
+									"            \"nume\": \"France\",\r",
+									"            \"lat\": 30.50,\r",
+									"            \"lon\": 30.50\r",
+									"        },\r",
+									"        {\r",
+									"            \"nume\": \"Germany\",\r",
+									"            \"lat\": 30.50,\r",
+									"            \"lon\": 50.20\r",
+									"        },\r",
+									"        {\r",
+									"            \"nume\": \"Italy\",\r",
+									"            \"lat\": 20.10,\r",
+									"            \"lon\": 50.20\r",
+									"        },\r",
+									"        {\r",
+									"            \"nume\": 1231\r",
+									"        },\r",
+									"        {\r",
+									"            \"caca\": \"maca\"\r",
+									"        },\r",
+									"        {\r",
+									"            \"nume\": \"Italy\",\r",
+									"            \"lat\": 20.10,\r",
+									"            \"lon\": 50.20\r",
+									"        }\r",
+									"    ];\r",
+									"    initialized = true;\r",
+									"    pm.variables.set(\"ADD_COUNTRY_INIT\", initialized);\r",
+									"    pm.collectionVariables.set(\"COUNTRIES_IDS\", JSON.stringify([]));\r",
+									"    pm.variables.set(\"ADD_COUNTRY_DATASET\", JSON.stringify(countries));\r",
+									"}\r",
+									"\r",
+									"const dataset = JSON.parse(pm.variables.get(\"ADD_COUNTRY_DATASET\"));\r",
+									"const currentCountry = dataset.shift();\r",
+									"console.log(currentCountry);\r",
+									"console.log(dataset);\r",
+									"pm.variables.set(\"CURRENT_COUNTRY\", JSON.stringify(currentCountry));\r",
+									"pm.variables.set(\"ADD_COUNTRY_DATASET\", JSON.stringify(dataset));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'object',\r",
+									"    minItems: 1,\r",
+									"    maxItems: 1,\r",
+									"     properties: {\r",
+									"        id: { type: ['string', 'number']}\r",
+									"    },\r",
+									"    additionalProperties: false\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Response should either be 201 and have id, or 409 or 400\", () => {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 400, 409]);\r",
+									"    const status = pm.response.code;\r",
+									"\r",
+									"    if (status === 201) {\r",
+									"\r",
+									"      //  pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"        pm.response.to.have.jsonSchema(schema);\r",
+									"        \r",
+									"        const resultId = pm.response.json().id;\r",
+									"        const countriesIds = JSON.parse(pm.collectionVariables.get(\"COUNTRIES_IDS\"));\r",
+									"        countriesIds.push(resultId);\r",
+									"        pm.collectionVariables.set(\"COUNTRIES_IDS\", JSON.stringify(countriesIds));\r",
+									"    }\r",
+									"\r",
+									"    const dataset = JSON.parse(pm.variables.get(\"ADD_COUNTRY_DATASET\"));\r",
+									"    console.log(dataset);\r",
+									"    console.log(dataset.length);\r",
+									"    if (dataset.length > 0) {\r",
+									"        postman.setNextRequest(\"Add Country v2\");\r",
+									"    } \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{CURRENT_COUNTRY}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/api/countries",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"countries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Country v2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'array',\r",
+									"    uniqueItems: true,\r",
+									"    minItems: 0,\r",
+									"    items: [{\r",
+									"        type: 'object',\r",
+									"        properties: {\r",
+									"            id: { type: ['number', 'string']},\r",
+									"            nume: { type: 'string'},\r",
+									"            lat: { type: 'number' },\r",
+									"            lon: { type: 'number'}\r",
+									"        },\r",
+									"        additionalProperties: false\r",
+									"    }]\r",
+									"}\r",
+									"\r",
+									"const countriesIds = JSON.parse(pm.collectionVariables.get(\"COUNTRIES_IDS\"));\r",
+									"\r",
+									"pm.test(\"Body should either be empty or respect the schema\", () => {\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"    // pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"    const responseJSON = pm.response.json();\r",
+									"    pm.expect(responseJSON).to.be.an(\"array\");\r",
+									"    pm.expect(responseJSON.length).to.eql(countriesIds.length);\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"\r",
+									"    responseJSON.forEach(e => {\r",
+									"        pm.expect(countriesIds.indexOf(e.id)).to.not.eql(-1);\r",
+									"    });\r",
+									"  \r",
+									"    console.log(pm.response.json());\r",
+									"    console.log(\"Countries ids are: \");\r",
+									"    console.log(countriesIds);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/countries",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"countries"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Put Country v2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should either be 200, 409, 400 or 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 400, 409, 404]);\r",
+									"    pm.expect(pm.response.body).to.not.exist;\r",
+									"    \r",
+									"    const dataset = JSON.parse(pm.variables.get(\"PUT_COUNTRY_DATASET\"));\r",
+									"    console.log(dataset);\r",
+									"    console.log(dataset.length);\r",
+									"    if (dataset.length > 0) {\r",
+									"        postman.setNextRequest(\"Put Country v2\");\r",
+									"    } \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const countriesIds = JSON.parse(pm.collectionVariables.get(\"COUNTRIES_IDS\"));\r",
+									"const countryId = countriesIds[0];\r",
+									"pm.variables.set('COUNTRYID', countryId);\r",
+									"\r",
+									"let initialized = pm.variables.get(\"PUT_COUNTRY_INIT\");\r",
+									"\r",
+									"if (!initialized) {\r",
+									"    const countries = [\r",
+									"        {\r",
+									"            \"id\": countryId,\r",
+									"            \"nume\": \"Caca\",\r",
+									"            \"lat\": 30.50,\r",
+									"            \"lon\": 40.20\r",
+									"        },\r",
+									"        {\r",
+									"            \"id\": countryId,\r",
+									"            \"nume\": \"Romania\",\r",
+									"            \"lat\": 20.10,\r",
+									"            \"lon\": 40.20\r",
+									"        },\r",
+									"        {\r",
+									"            \"nume\": 1231\r",
+									"        },\r",
+									"        {\r",
+									"            \"id\": 10001,\r",
+									"            \"caca\": \"maca\"\r",
+									"        },\r",
+									"        {\r",
+									"            \"id\": countryId,\r",
+									"            \"nume\": \"Italy\",\r",
+									"            \"lat\": 20.10,\r",
+									"            \"lon\": 50.20\r",
+									"        }\r",
+									"    ];\r",
+									"    initialized = true;\r",
+									"    pm.variables.set(\"PUT_COUNTRY_INIT\", initialized);\r",
+									"    pm.variables.set(\"PUT_COUNTRY_DATASET\", JSON.stringify(countries));\r",
+									"}\r",
+									"\r",
+									"const dataset = JSON.parse(pm.variables.get(\"PUT_COUNTRY_DATASET\"));\r",
+									"const currentCountry = dataset.shift();\r",
+									"console.log(dataset);\r",
+									"console.log(currentCountry);\r",
+									"pm.variables.set(\"CURRENT_COUNTRY\", JSON.stringify(currentCountry));\r",
+									"pm.variables.set(\"PUT_COUNTRY_DATASET\", JSON.stringify(dataset));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{CURRENT_COUNTRY}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/api/countries/{{COUNTRYID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"countries",
+								"{{COUNTRYID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Country v2",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const countriesIds = JSON.parse(pm.collectionVariables.get(\"COUNTRIES_IDS\"));\r",
+									"console.log(countriesIds.length);\r",
+									"console.log(countriesIds);\r",
+									"\r",
+									"if (countriesIds.length > 0) {\r",
+									"    const id = countriesIds.shift();\r",
+									"    pm.variables.set(\"COUNTRYID\", id);\r",
+									"    pm.collectionVariables.set(\"COUNTRIES_IDS\", JSON.stringify(countriesIds));\r",
+									"} else {\r",
+									"    pm.variables.set(\"COUNTRYID\", 1001);\r",
+									"}\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return either 200 or 404\", () => {\r",
+									"    pm.expect(pm.response.body).to.not.exist\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+									"\r",
+									"    const countryId = pm.variables.get(\"COUNTRYID\");\r",
+									"    \r",
+									"    if (countryId != 1001) {\r",
+									"        postman.setNextRequest('Delete Country v2');\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/countries/{{COUNTRYID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"countries",
+								"{{COUNTRYID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Cities",
+			"item": [
+				{
+					"name": "Add City v2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'object',\r",
+									"    minItems: 1,\r",
+									"    maxItems: 1,\r",
+									"    properties: {\r",
+									"        id: { type: ['string', 'number']}\r",
+									"    },\r",
+									"    additionalProperties: false\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Response should either be 201 and have id, 400, 404 or 409\", () => {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 400, 409, 404]);\r",
+									"    const status = pm.response.code;\r",
+									"    \r",
+									"    if (status === 201) {\r",
+									"    //    pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"        pm.response.to.have.jsonSchema(schema);\r",
+									"\r",
+									"        const resultId = pm.response.json().id;\r",
+									"        const citiesIds = JSON.parse(pm.collectionVariables.get(\"CITIES_IDS\"));\r",
+									"        citiesIds.push(resultId);\r",
+									"        pm.collectionVariables.set(\"CITIES_IDS\", JSON.stringify(citiesIds));\r",
+									"    }\r",
+									"\r",
+									"    const dataset = JSON.parse(pm.variables.get(\"ADD_CITY_DATASET\"));\r",
+									"    console.log(dataset);\r",
+									"    console.log(dataset.length);\r",
+									"    if (dataset.length > 0) {\r",
+									"        postman.setNextRequest(\"Add City v2\");\r",
+									"    } \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const countriesIds = JSON.parse(pm.collectionVariables.get(\"COUNTRIES_IDS\"));\r",
+									"const countryId = countriesIds[0];\r",
+									"\r",
+									"let initialized = pm.variables.get(\"ADD_CITY_INIT\");\r",
+									"\r",
+									"if (!initialized) {\r",
+									"    const cities = [\r",
+									"        {\r",
+									"            \"idTara\": countryId,\r",
+									"            \"nume\": \"Bucharest\",\r",
+									"            \"lat\": 37.555,\r",
+									"            \"lon\": 49.5\r",
+									"        },\r",
+									"        {\r",
+									"            \"idTara\": countryId,\r",
+									"            \"nume\": \"Craiova\",\r",
+									"            \"lat\": 37.555,\r",
+									"            \"lon\": 49.777\r",
+									"        },\r",
+									"        {\r",
+									"            \"idTara\": countryId,\r",
+									"            \"nume\": \"Timisoara\",\r",
+									"            \"lat\": 37.655,\r",
+									"            \"lon\": 49.877\r",
+									"        },\r",
+									"        {\r",
+									"            \"idTara\": countryId,\r",
+									"            \"nume\": \"Rejkavik\",\r",
+									"            \"lat\": 38,\r",
+									"            \"lon\": 50\r",
+									"        },\r",
+									"        {\r",
+									"            \"idTara\": countryId,\r",
+									"            \"nume\": \"Rejkavik\",\r",
+									"            \"lat\": 69.0,\r",
+									"            \"lon\": 69.0\r",
+									"        },\r",
+									"        {\r",
+									"            \"idTara\": 10001,\r",
+									"            \"nume\": \"Rejkavik\",\r",
+									"            \"lat\": 69.0,\r",
+									"            \"lon\": 69.0\r",
+									"        },\r",
+									"        {\r",
+									"            \"nume\": 10\r",
+									"        }\r",
+									"    ];\r",
+									"    initialized = true;\r",
+									"    pm.variables.set(\"ADD_CITY_INIT\", initialized);\r",
+									"    pm.collectionVariables.set(\"CITIES_IDS\", JSON.stringify([]));\r",
+									"    pm.variables.set(\"ADD_CITY_DATASET\", JSON.stringify(cities));\r",
+									"}\r",
+									"\r",
+									"const dataset = JSON.parse(pm.variables.get(\"ADD_CITY_DATASET\"));\r",
+									"const currentCity = dataset.shift();\r",
+									"console.log(currentCity);\r",
+									"console.log(dataset);\r",
+									"pm.variables.set(\"CURRENT_CITY\", JSON.stringify(currentCity));\r",
+									"pm.variables.set(\"ADD_CITY_DATASET\", JSON.stringify(dataset));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{CURRENT_CITY}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/api/cities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"cities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get City v2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'array',\r",
+									"    uniqueItems: true,\r",
+									"    minItems: 0,\r",
+									"    items: [{\r",
+									"        type: 'object',\r",
+									"        properties: {\r",
+									"            id: { type: ['number', 'string']},\r",
+									"            idTara: { type: ['number', 'string']},\r",
+									"            nume: { type: 'string'},\r",
+									"            lat: { type: 'number' },\r",
+									"            lon: { type: 'number'}\r",
+									"        },\r",
+									"        additionalProperties: false\r",
+									"    }]\r",
+									"}\r",
+									"\r",
+									"const citiesIds = JSON.parse(pm.collectionVariables.get(\"CITIES_IDS\"));\r",
+									"\r",
+									"pm.test(\"Body should either be empty or respect the schema\", () => {\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"    // pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"    const responseJSON = pm.response.json();\r",
+									"    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+									"    pm.expect(responseJSON.length).to.eql(citiesIds.length);\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"\r",
+									"    responseJSON.forEach(e => {\r",
+									"        pm.expect(citiesIds.indexOf(e.id)).to.not.eql(-1);\r",
+									"    });\r",
+									"   \r",
+									"    console.log(pm.response.json());\r",
+									"    console.log(\"Cities ids are: \");\r",
+									"    console.log(citiesIds);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/cities",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"cities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Cities by Country v2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'array',\r",
+									"    uniqueItems: true,\r",
+									"    minItems: 0,\r",
+									"    items: [{\r",
+									"        type: 'object',\r",
+									"        properties: {\r",
+									"            id: { type: ['number', 'string']},\r",
+									"            idTara: { type: ['number', 'string']},\r",
+									"            nume: { type: 'string'},\r",
+									"            lat: { type: 'number' },\r",
+									"            lon: { type: 'number'}\r",
+									"        },\r",
+									"        additionalProperties: false\r",
+									"    }]\r",
+									"}\r",
+									"\r",
+									"const citiesIds = JSON.parse(pm.collectionVariables.get(\"CITIES_IDS\"));\r",
+									"\r",
+									"pm.test(\"Body should either be empty or respect the schema\", () => {\r",
+									"    \r",
+									"    pm.response.to.have.status(200);\r",
+									"    // pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"    const responseJSON = pm.response.json();\r",
+									"    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+									"    pm.expect(responseJSON.length).to.eql(citiesIds.length);\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"   \r",
+									"    responseJSON.forEach(e => {\r",
+									"        pm.expect(citiesIds.indexOf(e.id)).to.not.eql(-1);\r",
+									"    });\r",
+									"    \r",
+									"    console.log(pm.response.json());\r",
+									"    console.log(\"Cities ids are: \");\r",
+									"    console.log(citiesIds);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const countriesIds = JSON.parse(pm.collectionVariables.get(\"COUNTRIES_IDS\"));\r",
+									"const countryId = countriesIds[0];\r",
+									"\r",
+									"pm.variables.set(\"COUNTRYID\", countryId);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/cities/country/{{COUNTRYID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"cities",
+								"country",
+								"{{COUNTRYID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Put City v2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should either be 200, 409, 400 or 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 400, 409, 404]);\r",
+									"    pm.expect(pm.response.body).to.not.exist;\r",
+									"    \r",
+									"    const dataset = JSON.parse(pm.variables.get(\"PUT_CITY_DATASET\"));\r",
+									"    console.log(dataset);\r",
+									"    console.log(dataset.length);\r",
+									"    if (dataset.length > 0) {\r",
+									"        postman.setNextRequest(\"Put City v2\");\r",
+									"    } \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const countriesIds = JSON.parse(pm.collectionVariables.get(\"COUNTRIES_IDS\"));\r",
+									"const countryId = countriesIds[0];\r",
+									"\r",
+									"const citiesIds = JSON.parse(pm.collectionVariables.get(\"CITIES_IDS\"));\r",
+									"const cityId = citiesIds[0];\r",
+									"pm.variables.set(\"CITYID\", cityId);\r",
+									"\r",
+									"let initialized = pm.variables.get(\"PUT_CITY_INIT\");\r",
+									"\r",
+									"if (!initialized) {\r",
+									"    const cities = [\r",
+									"        {   \r",
+									"            \"id\": cityId,\r",
+									"            \"idTara\": countryId,\r",
+									"            \"nume\": \"Caca\",\r",
+									"            \"lat\": 50.0,\r",
+									"            \"lon\": 51.0\r",
+									"        },\r",
+									"        {   \r",
+									"            \"id\": cityId,\r",
+									"            \"idTara\": countryId,\r",
+									"            \"nume\": \"Bucharest\",\r",
+									"            \"lat\": 50.0,\r",
+									"            \"lon\": 51.0\r",
+									"        },\r",
+									"        {\r",
+									"            \"id\": cityId,\r",
+									"            \"idTara\": countryId,\r",
+									"            \"nume\": \"Craiova\",\r",
+									"            \"lat\": 49.777,\r",
+									"            \"lon\": 37.555\r",
+									"        },\r",
+									"        {\r",
+									"            \"id\": 100001,\r",
+									"            \"idTara\": countryId,\r",
+									"            \"nume\": \"Botswana\",\r",
+									"            \"lat\": 100,\r",
+									"            \"lon\": 100\r",
+									"        },\r",
+									"        {\r",
+									"            \"nume\": 69\r",
+									"        },\r",
+									"        {   \"id\": cityId,\r",
+									"            \"idTara\": 100001,\r",
+									"            \"nume\": \"Pula\",\r",
+									"            \"lat\": 20.1,\r",
+									"            \"lon\": 40.2\r",
+									"        }\r",
+									"    ];\r",
+									"    initialized = true;\r",
+									"    pm.variables.set(\"PUT_CITY_INIT\", initialized);\r",
+									"    pm.variables.set(\"PUT_CITY_DATASET\", JSON.stringify(cities));\r",
+									"}\r",
+									"\r",
+									"const dataset = JSON.parse(pm.variables.get(\"PUT_CITY_DATASET\"));\r",
+									"const currentCity = dataset.shift();\r",
+									"console.log(dataset);\r",
+									"console.log(currentCity);\r",
+									"pm.variables.set(\"CURRENT_CITY\", JSON.stringify(currentCity));\r",
+									"pm.variables.set(\"PUT_CITY_DATASET\", JSON.stringify(dataset));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{CURRENT_CITY}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/api/cities/{{CITYID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"cities",
+								"{{CITYID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete City v2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return either 200 or 404\", () => {\r",
+									"    pm.expect(pm.response.body).to.not.exist\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+									"\r",
+									"    const cityId = pm.variables.get(\"CITYID\");\r",
+									"    \r",
+									"    if (cityId != 1001) {\r",
+									"        postman.setNextRequest('Delete City v2');\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const citiesIds = JSON.parse(pm.collectionVariables.get(\"CITIES_IDS\"));\r",
+									"console.log(citiesIds.length);\r",
+									"console.log(citiesIds);\r",
+									"\r",
+									"if (citiesIds.length > 0) {\r",
+									"    const id = citiesIds.shift();\r",
+									"    pm.variables.set(\"CITYID\", id);\r",
+									"    pm.collectionVariables.set(\"CITIES_IDS\", JSON.stringify(citiesIds));\r",
+									"} else {\r",
+									"    pm.variables.set(\"CITYID\", 1001);\r",
+									"}\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/cities/{{CITYID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"cities",
+								"{{CITYID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Temperatures",
+			"item": [
+				{
+					"name": "Add Temperatures",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const citiesIds = JSON.parse(pm.collectionVariables.get(\"CITIES_IDS\"));\r",
+									"\r",
+									"let initialized = pm.variables.get(\"ADD_TEMPERATURE_INIT\");\r",
+									"\r",
+									"if (!initialized) {\r",
+									"    const temps = [\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[0],\r",
+									"            \"valoare\": 32.5\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[0],\r",
+									"            \"valoare\": 28.5\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[0],\r",
+									"            \"valoare\": 26.12\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[1],\r",
+									"            \"valoare\": 32.5\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[1],\r",
+									"            \"valoare\": 28.5\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[1],\r",
+									"            \"valoare\": 26.12\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[2],\r",
+									"            \"valoare\": 32.5\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[2],\r",
+									"            \"valoare\": 28.5\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[2],\r",
+									"            \"valoare\": 26.12\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": 100001,\r",
+									"            \"valoare\": 38\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[0],\r",
+									"            \"valoare\": \"str\"\r",
+									"        },\r",
+									"        {\r",
+									"            \"idOras\": citiesIds[0]\r",
+									"        }\r",
+									"    ];\r",
+									"    initialized = true;\r",
+									"    pm.variables.set(\"ADD_TEMPERATURE_INIT\", initialized);\r",
+									"    pm.collectionVariables.set(\"TEMPERATURES_IDS\", JSON.stringify([]));\r",
+									"    pm.variables.set(\"ADD_TEMPERATURE_DATASET\", JSON.stringify(temps));\r",
+									"}\r",
+									"\r",
+									"const dataset = JSON.parse(pm.variables.get(\"ADD_TEMPERATURE_DATASET\"));\r",
+									"const currentTemperature = dataset.shift();\r",
+									"console.log(currentTemperature);\r",
+									"console.log(dataset);\r",
+									"pm.variables.set(\"CURRENT_TEMPERATURE\", JSON.stringify(currentTemperature));\r",
+									"pm.variables.set(\"ADD_TEMPERATURE_DATASET\", JSON.stringify(dataset));\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'object',\r",
+									"    minItems: 1,\r",
+									"    maxItems: 1,\r",
+									"    properties: {\r",
+									"        id: { type: ['string', 'number']}\r",
+									"    },\r",
+									"    additionalProperties: false\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Response should either be 201 and have id, 400, 404 or 409\", () => {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([201, 400, 409, 404]);\r",
+									"    const status = pm.response.code;\r",
+									"    \r",
+									"    if (status === 201) {\r",
+									"    //    pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"        pm.response.to.have.jsonSchema(schema);\r",
+									"\r",
+									"        const resultId = pm.response.json().id;\r",
+									"        const temperaturesIds = JSON.parse(pm.collectionVariables.get(\"TEMPERATURES_IDS\"));\r",
+									"        temperaturesIds.push(resultId);\r",
+									"        pm.collectionVariables.set(\"TEMPERATURES_IDS\", JSON.stringify(temperaturesIds));\r",
+									"    }\r",
+									"\r",
+									"    const dataset = JSON.parse(pm.variables.get(\"ADD_TEMPERATURE_DATASET\"));\r",
+									"    console.log(dataset);\r",
+									"    console.log(dataset.length);\r",
+									"    if (dataset.length > 0) {\r",
+									"        postman.setNextRequest(\"Add Temperatures\");\r",
+									"    } \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{CURRENT_TEMPERATURE}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/api/temperatures",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"temperatures"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Temperatures By Lat",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'array',\r",
+									"    uniqueItems: true,\r",
+									"    minItems: 0,\r",
+									"    items: [{\r",
+									"        type: 'object',\r",
+									"        properties: {\r",
+									"            id: { type: ['number', 'string']},\r",
+									"            valoare: { type: 'number'},\r",
+									"            timestamp: { type: 'string' }\r",
+									"        },\r",
+									"        additionalProperties: false\r",
+									"    }]\r",
+									"}\r",
+									"\r",
+									"const temperaturesIds = JSON.parse(pm.collectionVariables.get(\"TEMPERATURES_IDS\")).splice(0, 6);\r",
+									"\r",
+									"pm.test(\"Body should either be empty or respect the schema\", () => {\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"    // pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"    const responseJSON = pm.response.json();\r",
+									"    pm.expect(responseJSON).to.be.an(\"array\");\r",
+									"    pm.expect(responseJSON.length).to.eql(temperaturesIds.length);\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"    console.log(temperaturesIds);\r",
+									"    responseJSON.forEach(e => {\r",
+									"        pm.expect(temperaturesIds.indexOf(e.id)).to.not.eql(-1);\r",
+									"    })\r",
+									"    \r",
+									"    console.log(pm.response.json());\r",
+									"    console.log(\"Temperatures ids are: \");\r",
+									"    console.log(temperaturesIds);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/temperatures?lat=37.555",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"temperatures"
+							],
+							"query": [
+								{
+									"key": "lat",
+									"value": "37.555"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Temperatures By Lat and Lon",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'array',\r",
+									"    uniqueItems: true,\r",
+									"    minItems: 0,\r",
+									"    items: [{\r",
+									"        type: 'object',\r",
+									"        properties: {\r",
+									"            id: { type: ['number', 'string']},\r",
+									"            valoare: { type: 'number'},\r",
+									"            timestamp: { type: 'string'}\r",
+									"        },\r",
+									"        additionalProperties: false\r",
+									"    }]\r",
+									"}\r",
+									"\r",
+									"const temperaturesIds = JSON.parse(pm.collectionVariables.get(\"TEMPERATURES_IDS\")).splice(0, 3);\r",
+									"\r",
+									"pm.test(\"Body should either be empty or respect the schema\", () => {\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"    // pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"    const responseJSON = pm.response.json();\r",
+									"    pm.expect(responseJSON).to.be.an(\"array\");\r",
+									"    pm.expect(responseJSON.length).to.eql(temperaturesIds.length);\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"\r",
+									"    responseJSON.forEach(e => {\r",
+									"        pm.expect(temperaturesIds.indexOf(e.id)).to.not.eql(-1);\r",
+									"    })\r",
+									"    \r",
+									"    console.log(pm.response.json());\r",
+									"    console.log(\"Temperatures ids are: \");\r",
+									"    console.log(temperaturesIds);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/temperatures?lat=37.555&lon=49.5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"temperatures"
+							],
+							"query": [
+								{
+									"key": "lat",
+									"value": "37.555"
+								},
+								{
+									"key": "lon",
+									"value": "49.5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Temperatures By Incorrect Temperature",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Body should either be empty or respect the schema\", () => {\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"    // pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"    pm.expect(pm.response.json()).to.be.an(\"array\");\r",
+									"    pm.expect(pm.response.json().length).to.equal(0);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/temperatures?until=2020-12-12",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"temperatures"
+							],
+							"query": [
+								{
+									"key": "until",
+									"value": "2020-12-12"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Temperatures By Correct Temperature",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'array',\r",
+									"    uniqueItems: true,\r",
+									"    minItems: 0,\r",
+									"    items: [{\r",
+									"        type: 'object',\r",
+									"        properties: {\r",
+									"            id: { type: ['number', 'string']},\r",
+									"            valoare: { type: 'number'},\r",
+									"            timestamp: { type: 'string'}\r",
+									"        },\r",
+									"        additionalProperties: false\r",
+									"    }]\r",
+									"}\r",
+									"const temperaturesIds = JSON.parse(pm.collectionVariables.get(\"TEMPERATURES_IDS\"));\r",
+									"\r",
+									"pm.test(\"Body should either be empty or respect the schema\", () => {\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"    // pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"    const responseJSON = pm.response.json();\r",
+									"    pm.expect(responseJSON).to.be.an(\"array\");\r",
+									"    pm.expect(responseJSON.length).to.eql(temperaturesIds.length);\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"\r",
+									"    responseJSON.forEach(e => {\r",
+									"        pm.expect(temperaturesIds.indexOf(e.id)).to.not.eql(-1);\r",
+									"    })\r",
+									"    \r",
+									"    console.log(pm.response.json());\r",
+									"    console.log(\"Temperatures ids are: \");\r",
+									"    console.log(temperaturesIds);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/temperatures?from=2020-12-12",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"temperatures"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "2020-12-12"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Temperatures By City",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'array',\r",
+									"    uniqueItems: true,\r",
+									"    minItems: 0,\r",
+									"    items: [{\r",
+									"        type: 'object',\r",
+									"        properties: {\r",
+									"            id: { type: ['number', 'string']},\r",
+									"            valoare: { type: 'number'},\r",
+									"            timestamp: { type: 'string'}\r",
+									"        },\r",
+									"        additionalProperties: false\r",
+									"    }]\r",
+									"}\r",
+									"\r",
+									"const temperaturesIds = JSON.parse(pm.collectionVariables.get(\"TEMPERATURES_IDS\")).splice(0, 3);\r",
+									"const responseJSON = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Body should either be empty or respect the schema\", () => {\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"    // pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"    pm.expect(responseJSON).to.be.an(\"array\");\r",
+									"    pm.expect(responseJSON.length).to.eql(temperaturesIds.length);\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"\r",
+									"    responseJSON.forEach(e => {\r",
+									"        pm.expect(temperaturesIds.indexOf(e.id)).to.not.eql(-1);\r",
+									"    })\r",
+									"    \r",
+									"    console.log(pm.response.json());\r",
+									"    console.log(\"Temperatures ids are: \");\r",
+									"    console.log(temperaturesIds);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const citiesIds = JSON.parse(pm.collectionVariables.get(\"CITIES_IDS\"));\r",
+									"\r",
+									"pm.variables.set(\"CITYID\", citiesIds[0]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/temperatures/cities/{{CITYID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"temperatures",
+								"cities",
+								"{{CITYID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Temperatures By Country",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"    type: 'array',\r",
+									"    uniqueItems: true,\r",
+									"    minItems: 0,\r",
+									"    items: [{\r",
+									"        type: 'object',\r",
+									"        properties: {\r",
+									"            id: { type: ['number', 'string']},\r",
+									"            valoare: { type: 'number'},\r",
+									"            timestamp: { type: 'string'}\r",
+									"        },\r",
+									"        additionalProperties: false\r",
+									"    }]\r",
+									"}\r",
+									"\r",
+									"const temperaturesIds = JSON.parse(pm.collectionVariables.get(\"TEMPERATURES_IDS\"));\r",
+									"\r",
+									"pm.test(\"Body should either be empty or respect the schema\", () => {\r",
+									"\r",
+									"    pm.response.to.have.status(200);\r",
+									"    // pm.expect(pm.response.headers.get('Content-Type').split(';')[0]).to.eql('application/json');\r",
+									"    const responseJSON = pm.response.json();\r",
+									"    pm.expect(responseJSON).to.be.an(\"array\");\r",
+									"    pm.expect(responseJSON.length).to.eql(temperaturesIds.length);\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"\r",
+									"    responseJSON.forEach(e => {\r",
+									"        pm.expect(temperaturesIds.indexOf(e.id)).to.not.eql(-1);\r",
+									"    })\r",
+									"    \r",
+									"    console.log(pm.response.json());\r",
+									"    console.log(\"Temperatures ids are: \");\r",
+									"    console.log(temperaturesIds);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const countriesIds = JSON.parse(pm.collectionVariables.get(\"COUNTRIES_IDS\"));\r",
+									"pm.variables.set(\"COUNTRYID\", countriesIds[0]);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/temperatures/countries/{{COUNTRYID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"temperatures",
+								"countries",
+								"{{COUNTRYID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Put Temperature",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Response should either be 200, 409, 400 or 404\", () => {\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 400, 409, 404]);\r",
+									"    pm.expect(pm.response.body).to.not.exist;\r",
+									"    \r",
+									"    const dataset = JSON.parse(pm.variables.get(\"PUT_TEMPERATURE_DATASET\"));\r",
+									"    console.log(dataset);\r",
+									"    console.log(dataset.length);\r",
+									"    if (dataset.length > 0) {\r",
+									"        postman.setNextRequest(\"Put Temperature\");\r",
+									"    } \r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const citiesIds = JSON.parse(pm.collectionVariables.get(\"CITIES_IDS\"));\r",
+									"const cityId = citiesIds[0];\r",
+									"\r",
+									"const temperaturesIds = JSON.parse(pm.collectionVariables.get(\"TEMPERATURES_IDS\"));\r",
+									"const temperatureId = temperaturesIds[0];\r",
+									"pm.variables.set(\"TEMPERATUREID\", temperatureId);\r",
+									"\r",
+									"let initialized = pm.variables.get(\"PUT_TEMPERATURE_INIT\");\r",
+									"\r",
+									"if (!initialized) {\r",
+									"    const temperatures = [\r",
+									"         {\r",
+									"            \"id\": temperatureId, \r",
+									"            \"idOras\": cityId,\r",
+									"            \"valoare\": 50\r",
+									"        },\r",
+									"        {\r",
+									"            \"id\": temperatureId,\r",
+									"            \"idOras\": cityId,\r",
+									"            \"valoare\": 79\r",
+									"        },\r",
+									"        {\r",
+									"            \"id\": cityId,\r",
+									"            \"idTara\": cityId,\r",
+									"            \"nume\": \"Craiova\",\r",
+									"            \"lat\": 49.777,\r",
+									"            \"lon\": 37.555\r",
+									"        },\r",
+									"        {\r",
+									"            \"id\": 100001,\r",
+									"            \"idOras\": cityId,\r",
+									"            \"valoare\": 50\r",
+									"        },\r",
+									"        {\r",
+									"            \"nume\": 69\r",
+									"        },\r",
+									"        {   \"id\": cityId,\r",
+									"            \"idCity\": 100001,\r",
+									"            \"valoare\": 123\r",
+									"        }\r",
+									"    ];\r",
+									"    initialized = true;\r",
+									"    pm.variables.set(\"PUT_TEMPERATURE_INIT\", initialized);\r",
+									"    pm.variables.set(\"PUT_TEMPERATURE_DATASET\", JSON.stringify(temperatures));\r",
+									"}\r",
+									"\r",
+									"const dataset = JSON.parse(pm.variables.get(\"PUT_TEMPERATURE_DATASET\"));\r",
+									"const currentTemperature = dataset.shift();\r",
+									"console.log(dataset);\r",
+									"console.log(currentTemperature);\r",
+									"pm.variables.set(\"CURRENT_TEMPERATURE\", JSON.stringify(currentTemperature));\r",
+									"pm.variables.set(\"PUT_TEMPERATURE_DATASET\", JSON.stringify(dataset));"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{{CURRENT_TEMPERATURE}}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:{{port}}/api/temperatures/{{TEMPERATUREID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"temperatures",
+								"{{TEMPERATUREID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Temperature",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Should return either 200 or 404\", () => {\r",
+									"    pm.expect(pm.response.body).to.not.exist\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200, 404]);\r",
+									"\r",
+									"    const temperatureId = pm.variables.get(\"TEMPERATUREID\");\r",
+									"    \r",
+									"    if (temperatureId != 1001) {\r",
+									"        postman.setNextRequest('Delete Temperature');\r",
+									"    }\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"const temperaturesIds = JSON.parse(pm.collectionVariables.get(\"TEMPERATURES_IDS\"));\r",
+									"console.log(temperaturesIds.length);\r",
+									"console.log(temperaturesIds);\r",
+									"\r",
+									"if (temperaturesIds.length > 0) {\r",
+									"    const id = temperaturesIds.shift();\r",
+									"    pm.variables.set(\"TEMPERATUREID\", id);\r",
+									"    pm.collectionVariables.set(\"TEMPERATURES_IDS\", JSON.stringify(temperaturesIds));\r",
+									"} else {\r",
+									"    pm.variables.set(\"TEMPERATUREID\", 1001);\r",
+									"}\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:{{port}}/api/temperatures/{{TEMPERATUREID}}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "{{port}}",
+							"path": [
+								"api",
+								"temperatures",
+								"{{TEMPERATUREID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "COUNTRIES_IDS",
+			"value": ""
+		},
+		{
+			"key": "CITIES_IDS",
+			"value": ""
+		},
+		{
+			"key": "TEMPERATURES_IDS",
+			"value": ""
+		}
+	]
+}
